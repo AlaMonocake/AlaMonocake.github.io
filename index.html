@@ -4,39 +4,121 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Holy Grail War Simulator</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="style.css">
 </head>
-<body class="container">
-    <div class="content">
-        <h1 class="title">Holy Grail War Simulator</h1>
 
+<body class="container">
+    <header>
+        <h1 class="title">Holy Grail War Simulator</h1>
+        <h2>The Cast</h2>
+            </header>
+    <div class="content">
         <!-- Master Customization Section -->
         <div class="form-container">
-            <h2>Customize Your Master</h2>
-
             <form id="master-form">
+                <h4>Team 1</h4>
+                <h3>The Master</h3>
+                <!-- Master Picture -->
+                <img id="master-default-img" src="https://cdn.myanimelist.net/images/characters/13/173271.jpg" alt="Default Master" class="default-image">
+
                 <!-- Name Input -->
                 <label for="master-name">Name:</label>
-                <input type="text" id="master-name" class="input" placeholder="Enter your Master's name" required>
+                <input type="text" id="master-name" class="input" placeholder="Shirou" required>
 
                 <!-- Gender Selection -->
-                <label>Gender:</label>
-                <div class="radio-group">
-                    <label>
-                        <input type="radio" name="gender" value="Male"> Male
-                    </label>
-                    <label>
-                        <input type="radio" name="gender" value="Female"> Female
-                    </label>
+                <label for="gender">Choose a gender:</label>
+                <select name="gender" id="gender">
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                </select>
+                <br>
+                
+
+                <!-- Picture Upload or URL -->
+                <label for="master-picture">Picture:</label>
+                <input type="text" id="master-picture" class="input" placeholder="Paste image URL">
+                <p class="hint">Or upload an image (coming soon).</p>
+                
+                <!-- Servant Selection -->
+                <h3>The Servant</h3>
+
+                <div class="servant-selection">
+                    <button id="randomize-servant" type="button" class="button">Randomize</button>
+                    <select id="servant-select" class="input">
+                        <option value="">Choose a Servant</option>
+                        <option value="Artoria">Saber - Artoria Pendragon</option>
+                        <option value="Gilgamesh">Archer - Gilgamesh</option>
+                        <option value="Hassan">Assassin - Hassan of the Cursed Arm</option>
+                    </select>
+                </div> <!-- servant selection's div -->
+            </div> <!-- form container's div -->
+
+                <!-- TEAM 2 -->
+                <div class="form-container">
+                    <div class="masterdiv">
+                <h3>Team 2</h3>
+                <h3>The Master</h3>
+                 <!-- Master Picture -->
+                 <img id="master-default-img" src="https://cdn.myanimelist.net/images/characters/16/355395.jpg" alt="Default Master" class="default-image">
+
+                <!-- Name Input -->
+                <label for="master-name">Name:</label>
+                <input type="text" id="master-name" class="input" placeholder="Hakuno" required>
+
+                <!-- Gender Selection -->
+                <label for="gender">Choose a gender:</label>
+                <select name="gender" id="gender">
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                </select>
+                <br>
                 </div>
 
                 <!-- Picture Upload or URL -->
                 <label for="master-picture">Picture:</label>
                 <input type="text" id="master-picture" class="input" placeholder="Paste image URL">
                 <p class="hint">Or upload an image (coming soon).</p>
-
                 <!-- Servant Selection -->
-                <h2>Select Your Servant</h2>
+                <h3>The Servant</h3>
+
+                <div class="servant-selection">
+                    <button id="randomize-servant" type="button" class="button">Randomize</button>
+                    <select id="servant-select" class="input">
+                        <option value="">Choose a Servant</option>
+                        <option value="Artoria">Saber - Artoria Pendragon</option>
+                        <option value="Gilgamesh">Archer - Gilgamesh</option>
+                        <option value="Hassan">Assassin - Hassan of the Cursed Arm</option>
+                    </select>
+                </div> <!-- servant selection's div -->
+            </div>
+                <!-- TEAM 3 -->
+                <div class="form-container">
+                    <div class="masterdiv">
+                <h3>Team 3</h3>
+                <h3>The Master</h3>
+                 <!-- Master Picture -->
+                 <img id="master-default-img" src="https://cdn.myanimelist.net/images/characters/6/345083.jpg" alt="Default Master" class="default-image">
+
+                <!-- Name Input -->
+                <label for="master-name">Name:</label>
+                <input type="text" id="master-name" class="input" placeholder="Ritsuka" required>
+
+                <!-- Gender Selection -->
+                <label for="gender">Choose a gender:</label>
+                <select name="gender" id="gender">
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                </select>
+                <br>
+                </div>
+
+                <!-- Picture Upload or URL -->
+                <label for="master-picture">Picture:</label>
+                <input type="text" id="master-picture" class="input" placeholder="Paste image URL">
+                <p class="hint">Or upload an image (coming soon).</p>
+                
+                <!-- Servant Selection -->
+                <h3>The Servant</h3>
 
                 <div class="servant-selection">
                     <button id="randomize-servant" type="button" class="button">Randomize</button>
@@ -47,15 +129,167 @@
                         <option value="Hassan">Assassin - Hassan of the Cursed Arm</option>
                     </select>
                 </div>
+            </div>
+                <!-- TEAM 4 -->
+                <div class="form-container">
+                    <div class="masterdiv">
+                <h3>Team 4</h3>
+                <h3>The Master</h3>
+                 <!-- Master Picture -->
+                 <img id="master-default-img" src="https://cdn.myanimelist.net/images/characters/7/296254.jpg" alt="Default Master" class="default-image">
 
-                <!-- Selected Servant Display -->
-                <div id="servant-display" class="servant-display"></div>
+                <!-- Name Input -->
+                <label for="master-name">Name:</label>
+                <input type="text" id="master-name" class="input" placeholder="Shinji" required>
 
-                <!-- Start Simulation Button -->
-                <button type="submit" class="button">Start Simulation</button>
+                <!-- Gender Selection -->
+                <label for="gender">Choose a gender:</label>
+                <select name="gender" id="gender">
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                </select>
+                <br>
+                </div>
+
+                <!-- Picture Upload or URL -->
+                <label for="master-picture">Picture:</label>
+                <input type="text" id="master-picture" class="input" placeholder="Paste image URL">
+                <p class="hint">Or upload an image (coming soon).</p>
+                
+                <!-- Servant Selection -->
+                <h3>The Servant</h3>
+
+                <div class="servant-selection">
+                    <button id="randomize-servant" type="button" class="button">Randomize</button>
+                    <select id="servant-select" class="input">
+                        <option value="">Choose a Servant</option>
+                        <option value="Artoria">Saber - Artoria Pendragon</option>
+                        <option value="Gilgamesh">Archer - Gilgamesh</option>
+                        <option value="Hassan">Assassin - Hassan of the Cursed Arm</option>
+                    </select>
+                </div>
+            </div>
+                <!-- TEAM 5 -->
+                <div class="form-container">
+                    <div class="masterdiv">
+                <h3>Team 5</h3>
+                <h3>The Master</h3>
+                 <!-- Master Picture -->
+                 <img id="master-default-img" src="https://cdn.myanimelist.net/images/characters/6/282306.jpg" alt="Default Master" class="default-image">
+
+                <!-- Name Input -->
+                <label for="master-name">Name:</label>
+                <input type="text" id="master-name" class="input" placeholder="Kirei" required>
+
+                <!-- Gender Selection -->
+                <label for="gender">Choose a gender:</label>
+                <select name="gender" id="gender">
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                </select>
+                <br>
+                </div>
+
+                <!-- Picture Upload or URL -->
+                <label for="master-picture">Picture:</label>
+                <input type="text" id="master-picture" class="input" placeholder="Paste image URL">
+                <p class="hint">Or upload an image (coming soon).</p>
+                
+                <!-- Servant Selection -->
+                <h3>The Servant</h3>
+                <div class="servant-selection">
+                    <button id="randomize-servant" type="button" class="button">Randomize</button>
+                    <select id="servant-select" class="input">
+                        <option value="">Choose a Servant</option>
+                        <option value="Artoria">Saber - Artoria Pendragon</option>
+                        <option value="Gilgamesh">Archer - Gilgamesh</option>
+                        <option value="Hassan">Assassin - Hassan of the Cursed Arm</option>
+                    </select>
+            </div>
+        </div>
+                <!-- TEAM 6 -->
+                <div class="form-container">
+                    <div class="masterdiv">
+                <h3>Team 6</h3>
+                <h3>The Master</h3>
+                 <!-- Master Picture -->
+                 <img id="master-default-img" src="https://cdn.myanimelist.net/images/characters/12/361841.jpg" alt="Default Master" class="default-image">
+
+                <!-- Name Input -->
+                <label for="master-name">Name:</label>
+                <input type="text" id="master-name" class="input" placeholder="Leo" required>
+
+                <!-- Gender Selection -->
+                <label for="gender">Choose a gender:</label>
+                <select name="gender" id="gender">
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                </select>
+                <br>
+                </div>
+
+                <!-- Picture Upload or URL -->
+                <label for="master-picture">Picture:</label>
+                <input type="text" id="master-picture" class="input" placeholder="Paste image URL">
+                <p class="hint">Or upload an image (coming soon).</p>
+                
+                <!-- Servant Selection -->
+                <h3>The Servant</h3>
+
+                <div class="servant-selection">
+                    <button id="randomize-servant" type="button" class="button">Randomize</button>
+                    <select id="servant-select" class="input">
+                        <option value="">Choose a Servant</option>
+                        <option value="Artoria">Saber - Artoria Pendragon</option>
+                        <option value="Gilgamesh">Archer - Gilgamesh</option>
+                        <option value="Hassan">Assassin - Hassan of the Cursed Arm</option>
+                    </select>
+                </div>
+            </div>
+                <!-- TEAM 7 -->
+                <div class="form-container">
+                    <div class="masterdiv">
+                <h3>Team 7</h3>
+                <h3>The Master</h3>
+                 <!-- Master Picture -->
+                 <img id="master-default-img" src="https://cdn.myanimelist.net/images/characters/2/504881.jpg" alt="Default Master" class="default-image">
+
+                <!-- Name Input -->
+                <label for="master-name">Name:</label>
+                <input type="text" id="master-name" class="input" placeholder="Kadoc" required>
+
+                <!-- Gender Selection -->
+                <label for="gender">Choose a gender:</label>
+                <select name="gender" id="gender">
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                </select>
+                <br>
+                </div>
+
+                <!-- Picture Upload or URL -->
+                <label for="master-picture">Picture:</label>
+                <input type="text" id="master-picture" class="input" placeholder="Paste image URL">
+                <p class="hint">Or upload an image (coming soon).</p>
+                
+                <!-- Servant Selection -->
+                <h3>The Servant</h3>
+
+                <div class="servant-selection">
+                    <button id="randomize-servant" type="button" class="button">Randomize</button>
+                    <select id="servant-select" class="input">
+                        <option value="">Choose a Servant</option>
+                        <option value="Artoria">Saber - Artoria Pendragon</option>
+                        <option value="Gilgamesh">Archer - Gilgamesh</option>
+                        <option value="Hassan">Assassin - Hassan of the Cursed Arm</option>
+                    </select>
+                </div>
             </form>
         </div>
     </div>
+         <!-- Start Simulation Button -->
+         <button type="submit" class="button" id="simulation">Start Simulation</button>
+    
 
     <script>
         // Simulate fetching a random Servant
