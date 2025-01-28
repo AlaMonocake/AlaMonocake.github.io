@@ -1,7 +1,89 @@
 <!DOCTYPE html>
-<html>
-<body>
-<h1>Hello World</h1>
-<p>I'm hosted with GitHub Pages.</p>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Holy Grail War Simulator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="container">
+    <div class="content">
+        <h1 class="title">Holy Grail War Simulator</h1>
+
+        <!-- Master Customization Section -->
+        <div class="form-container">
+            <h2>Customize Your Master</h2>
+
+            <form id="master-form">
+                <!-- Name Input -->
+                <label for="master-name">Name:</label>
+                <input type="text" id="master-name" class="input" placeholder="Enter your Master's name" required>
+
+                <!-- Gender Selection -->
+                <label>Gender:</label>
+                <div class="radio-group">
+                    <label>
+                        <input type="radio" name="gender" value="Male"> Male
+                    </label>
+                    <label>
+                        <input type="radio" name="gender" value="Female"> Female
+                    </label>
+                </div>
+
+                <!-- Picture Upload or URL -->
+                <label for="master-picture">Picture:</label>
+                <input type="text" id="master-picture" class="input" placeholder="Paste image URL">
+                <p class="hint">Or upload an image (coming soon).</p>
+
+                <!-- Servant Selection -->
+                <h2>Select Your Servant</h2>
+
+                <div class="servant-selection">
+                    <button id="randomize-servant" type="button" class="button">Randomize</button>
+                    <select id="servant-select" class="input">
+                        <option value="">Choose a Servant</option>
+                        <option value="Artoria">Saber - Artoria Pendragon</option>
+                        <option value="Gilgamesh">Archer - Gilgamesh</option>
+                        <option value="Hassan">Assassin - Hassan of the Cursed Arm</option>
+                    </select>
+                </div>
+
+                <!-- Selected Servant Display -->
+                <div id="servant-display" class="servant-display"></div>
+
+                <!-- Start Simulation Button -->
+                <button type="submit" class="button">Start Simulation</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Simulate fetching a random Servant
+        const servants = [
+            { name: "Artoria Pendragon", class: "Saber", image: "https://via.placeholder.com/150" },
+            { name: "Gilgamesh", class: "Archer", image: "https://via.placeholder.com/150" },
+            { name: "Hassan of the Cursed Arm", class: "Assassin", image: "https://via.placeholder.com/150" }
+        ];
+
+        document.getElementById("randomize-servant").addEventListener("click", () => {
+            const randomServant = servants[Math.floor(Math.random() * servants.length)];
+            const display = document.getElementById("servant-display");
+            display.innerHTML = `
+                <p>${randomServant.class} - ${randomServant.name}</p>
+                <img src="${randomServant.image}" alt="${randomServant.name}">
+            `;
+        });
+
+        document.getElementById("master-form").addEventListener("submit", (e) => {
+            e.preventDefault();
+
+            const name = document.getElementById("master-name").value;
+            const gender = document.querySelector("input[name='gender']:checked")?.value;
+            const picture = document.getElementById("master-picture").value;
+            const servantName = document.getElementById("servant-select").value || "Randomized Servant";
+
+            alert(`Master: ${name}\nGender: ${gender}\nServant: ${servantName}`);
+        });
+    </script>
 </body>
 </html>
