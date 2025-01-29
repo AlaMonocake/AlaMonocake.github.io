@@ -80,3 +80,61 @@ function populateServantDropdown(servantDataArray) {
 }
 // Call the function to fetch and process Servant data
 fetchServantData();
+//now the code for the servant randomizing
+document.addEventListener("DOMContentLoaded", function () {
+    const servantDropdowns = document.querySelectorAll(".servant-select");
+    const randomizeButtons = document.querySelectorAll(".randomize-servant");
+    let servantList = [];
+    
+    async function fetchServantList() {
+        const url = "https://api.atlasacademy.io/export/NA/basic_servant.json";
+        try {
+            const response = await fetch(url);
+            const servants = await response.json();
+            servantList = servants.map(servant => ({
+                id: servant.id,
+                name: servant.name,
+                image: servant.face
+            }));
+        } catch (error) {
+            console.error("Failed to fetch Servants:", error);
+            servantList = [];
+        }
+    }
+    
+    function findMatchingDropdownOption(dropdown, servantName) {
+        for (let option of dropdown.options) {
+            if (option.textContent.includes(servantName)) {
+                return option.value;
+            }
+        }
+        return ""; 
+    }
+    
+    function randomizeServant(index) {
+        if (servantList.length === 0) return;
+        
+        const randomServant = servantList[Math.floor(Math.random() * servantList.length)];
+        const dropdown = servantDropdowns[index];
+        
+        if (dropdown) {
+            const matchedValue = findMatchingDropdownOption(dropdown, randomServant.name);
+            if (matchedValue) {
+                dropdown.value = matchedValue;
+            }
+        }
+        
+        const servantImage = document.querySelectorAll(".servant-img")[index];
+        if (servantImage) {
+            servantImage.src = randomServant.image;
+        }
+    }
+    
+    fetchServantList().then(() => {
+        randomizeButtons.forEach((button, index) => {
+            button.addEventListener("click", function () {
+                randomizeServant(index);
+            });
+        });
+    });
+});

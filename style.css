@@ -93,10 +93,22 @@ img {
     max-width: 150px;
     max-height: 200px;
 }
-#simulation {
+#next-day,#simulation {
     position: absolute;
     left: 45%;
     margin-top: 10px;
     border: 1px solid white;
     background-color:rgb(49, 14, 14);
+}
+.event-container {
+    width: 1000px;                /* Fixed width for each container */
+    display: flex;               /* Flexbox for Master and Servant sections */
+    flex-direction: column;      /* Ensures Master and Servant stack vertically */
+    margin-left: auto;
+    margin-right: auto;
+    background-color:rgb(51, 27, 27);   /* Background color */
+    padding: 10px;
+    border: 1px solid #ff4444;      /* Border around each container */
+    border-radius: 10px;
+    box-sizing: border-box;      /* Ensures padding is included in width */
 }
