@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Holy Grail War Simulator</title>
     <link rel="stylesheet" href="style.css">
-    <script defer src="simulation.js"></script>
 </head>
 <body>
     <header>
@@ -21,5 +20,44 @@
         
         <button class="button" id="next-day">Proceed to Next Day</button>
     </main>
+     <!-- The script to collect participants follows -->
+    <script>
+        function loadParticipants() {
+    const storedData = localStorage.getItem("participants");
+    
+    if (!storedData) {
+        console.error("No participants found in localStorage.");
+        document.getElementById("event-log").innerHTML = "<p>No participants found. Please start from the index page.</p>";
+        return;
+    }
+
+    const participants = JSON.parse(storedData);
+    console.log("Loaded Participants:", participants); // Debugging line
+
+    if (!Array.isArray(participants) || participants.length === 0) {
+        console.error("Participants data is empty or invalid.");
+        document.getElementById("event-log").innerHTML = "<p>No participants found. Please start from the index page.</p>";
+        return;
+    }
+
+    return participants;
+}
+    function generateTestEvents(participants) {
+    const eventLog = document.getElementById("event-log");
+    let events = `<h2>Day 1</h2>`;
+
+    // Filter only masters (to avoid looping through servants separately)
+    const masters = participants.filter(p => p.type === "master");
+
+    // Generate summoning events for each master
+    masters.forEach(master => {
+        if (master.servant) {
+            events += `<p><img src="${master.picture}" width="50"> <strong>${master.name}</strong> summons <strong>${master.servant}</strong>.</p>`;
+        }
+    });
+
+    eventLog.innerHTML = events;
+}   
+    </script>
 </body>
 </html>
