@@ -139,102 +139,37 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-//the code to collect the participants data and start the simulation:
-document.addEventListener("DOMContentLoaded", function () {
-    // Function to gather all selected Masters and Servants
-    function collectParticipants() {
-        const participants = [];
-        
-        document.querySelectorAll(".master").forEach((masterContainer, index) => {
-            const name = masterContainer.querySelector(".master-name").value || `Master ${index + 1}`;
-            const gender = masterContainer.querySelector(".gender-select").value === "male";
-            const picture = masterContainer.querySelector(".master-img").src;
-
-            const masterContainers = document.querySelectorAll(".master");
-console.log(`Found ${masterContainers.length} master containers`);
-
-masterContainers.forEach((masterContainer, index) => {
-    console.log(`Checking Master ${index + 1}:`, masterContainer);
-});
-
-            const servantDropdown = masterContainer.querySelector(".servant-select");
-            const servantName = servantDropdown.options[servantDropdown.selectedIndex].textContent;
-            if (!servantDropdown) {
-                console.error(`❌ Servant dropdown missing in Master ${index + 1}`);
-            } else {
-                console.log(`✅ Servant dropdown found in Master ${index + 1}`);
-            }
-
-            console.log("Name Input:", nameInput);
-            console.log("Picture Input:", pictureInput);
-            console.log("Servant Dropdown:", servantDropdown);
-            
-            participants.push({
-                name,
-                gender,
-                picture,
-                status: "alive",
-                type: "master",
-                servant: servantName
-            });
-
-            // Find servant details
-            const servantImg = document.querySelectorAll(".servant-img")[index].src;
-            const servantHasIndependentAction = false; // Placeholder, replace with fetched data if available
-            
-            participants.push({
-                name: servantName,
-                picture: servantImg,
-                status: "alive",
-                type: "servant",
-                master: name,
-                independentAction: servantHasIndependentAction
-            });
-        });
-
-        return participants;
-    }
     
-    // Save to localStorage and move to simulation page
-    document.getElementById("simulation").addEventListener("click", function () {
-        const participants = collectParticipants();
-        localStorage.setItem("participants", JSON.stringify(participants));
-        window.location.href = "simulation.html";
-    });
-});
+    
 //simulation button function:
 function saveParticipantsAndStartSimulation() {
-    const masters = document.querySelectorAll(".master");
+    let masterContainers = document.querySelectorAll(".master");
     let participants = [];
 
-    masters.forEach((master, index) => {
-        const nameInput = master.querySelector(".name-input");
-        const name = nameInput ? nameInput.value : `Master ${index + 1}`;
-        const picture = master.querySelector(".master-img").src;
-        const servantSelect = master.querySelector(".servant-select");
-        const servant = servantSelect ? servantSelect.value : "Unknown";
+    masterContainers.forEach((masterContainer, index) => {
+        let name = masterContainer.querySelector(".master-name").value || `Master ${index + 1}`;
+        let picture = masterContainer.querySelector(".master-picture").value || "https://via.placeholder.com/50";
+        let servantDropdown = masterContainer.querySelector(".servant-select");
+        let servant = servantDropdown ? servantDropdown.value : "Unknown";
+
+        console.log(`Master ${index + 1}: Servant Selected ->`, servant);  // Debugging line
 
         participants.push({
-            name,
-            picture,
+            name: name,
+            picture: picture,
             status: "alive",
             type: "master",
-            servant
+            servant: servant
         });
     });
 
-    // Debugging Step: Log before saving
-    console.log("Saving participants:", participants);
-
-    // Save to localStorage
+    console.log("Final participants before saving:", participants);
     localStorage.setItem("participants", JSON.stringify(participants));
 
-    // Debugging Step: Verify it saved correctly
-    console.log("Saved to localStorage:", localStorage.getItem("participants"));
-
-    // Redirect to simulation page
-    window.location.href = "simulation.html";
+    console.log("Saved to localStorage!");
+    window.location.href = "simulation.html";  // Redirect to the simulation page
 }
+
 //code to attach the above function to the button:
 document.addEventListener("DOMContentLoaded", function () {
     const startButton = document.getElementById("simulation");

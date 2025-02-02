@@ -21,10 +21,14 @@
         <button class="button" id="next-day">Proceed to Next Day</button>
     </main>
      <!-- The script to collect participants follows -->
-    <script>
-        function loadParticipants() {
+     <script>
+        
+    function loadParticipants() {
+    console.log("Running loadParticipants()");
+
     const storedData = localStorage.getItem("participants");
-    
+    console.log("Loaded raw data:", storedData);
+
     if (!storedData) {
         console.error("No participants found in localStorage.");
         document.getElementById("event-log").innerHTML = "<p>No participants found. Please start from the index page.</p>";
@@ -32,7 +36,16 @@
     }
 
     const participants = JSON.parse(storedData);
-    console.log("Loaded Participants:", participants); // Debugging line
+console.log("Parsed participants:", participants);  // Debugging line
+    try {
+        participants = JSON.parse(storedData);
+    } catch (error) {
+        console.error("Error parsing participants data:", error);
+        document.getElementById("event-log").innerHTML = "<p>Error loading participants data.</p>";
+        return;
+    }
+
+    console.log("Parsed Participants:", participants);
 
     if (!Array.isArray(participants) || participants.length === 0) {
         console.error("Participants data is empty or invalid.");
@@ -40,24 +53,16 @@
         return;
     }
 
+    console.log("Event log element found:", document.getElementById("event-log"));
     return participants;
-}
-    function generateTestEvents(participants) {
-    const eventLog = document.getElementById("event-log");
-    let events = `<h2>Day 1</h2>`;
-
-    // Filter only masters (to avoid looping through servants separately)
-    const masters = participants.filter(p => p.type === "master");
-
-    // Generate summoning events for each master
-    masters.forEach(master => {
-        if (master.servant) {
-            events += `<p><img src="${master.picture}" width="50"> <strong>${master.name}</strong> summons <strong>${master.servant}</strong>.</p>`;
-        }
+};
+//actually load participants
+document.addEventListener("DOMContentLoaded", loadParticipants);
+document.addEventListener("DOMContentLoaded", () => {
+        console.log("Simulation page loaded");
+        loadParticipants();
     });
-
-    eventLog.innerHTML = events;
-}   
-    </script>
+</script>
+        </script>
 </body>
 </html>
