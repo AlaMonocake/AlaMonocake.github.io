@@ -2,67 +2,68 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Holy Grail War Simulator</title>
-    <link rel="stylesheet" href="styles.css">
-    <script defer src="simulation.js"></script>
-    <script defer src="randomizer.js"></script>
+    <title>Simulation</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        img { border-radius: 50%; margin-right: 10px; }
+    </style>
 </head>
 <body>
-    <header>
-        <h1>HOLY GRAIL WAR SIMULATOR</h1>
-    </header>
-    
-    <main>
-        <h2 id="day-counter">Day 1</h2>
-        <div id="event-log" class="event-container">
-            <!-- Events will be inserted here by JavaScript -->
-        </div>
-        
-        <button id="next-day">Proceed to Next Day</button>
-    </main>
-     <!-- The script to collect participants follows -->
-     <script>
-        console.log("Raw localStorage on load:", localStorage.getItem("participants"));
+    <h1>Holy Grail War Simulation</h1>
+    <div id="event-log">
+        <p>Loading simulation...</p>
+    </div>
+
+    <script>
         function loadParticipants() {
-    const storedData = localStorage.getItem("participants");
-    console.log("Loaded raw data from localStorage:", storedData);
+            console.log("Running loadParticipants()");
+            const rawData = localStorage.getItem("participants");
+            console.log("Loaded raw data:", rawData);
 
-    if (!storedData) {
-        console.error("No participants found in localStorage.");
-        document.getElementById("event-log").innerHTML = "<p>No participants found. Please start from the index page.</p>";
-        return [];
-    }
+            if (!rawData) {
+                console.error("No participants found in localStorage.");
+                document.getElementById("event-log").innerHTML = "<p>No participants found. Please start from the index page.</p>";
+                return [];
+            }
 
-    let participants;
-    try {
-        participants = JSON.parse(storedData);
-    } catch (e) {
-        console.error("Error parsing participants JSON:", e);
-        document.getElementById("event-log").innerHTML = "<p>Failed to load participants data. Please re-enter data.</p>";
-        return [];
-    }
+            try {
+                const participants = JSON.parse(rawData);
+                console.log("Parsed participants:", participants);
+                return participants;
+            } catch (e) {
+                console.error("Error parsing participants:", e);
+                document.getElementById("event-log").innerHTML = "<p>Error loading participants data.</p>";
+                return [];
+            }
+        }
 
-    if (!Array.isArray(participants) || participants.length === 0) {
-        console.error("Participants data is empty or invalid.");
-        document.getElementById("event-log").innerHTML = "<p>No valid participants found. Please start from the index page.</p>";
-        return [];
-    }
+        function generateDayOneEvents(participants) {
+            const eventLog = document.getElementById("event-log");
+            let events = `<h2>Day 1: Summoning</h2>`;
 
-    console.log("Loaded Participants:", participants);
-    return participants;
-}
-window.addEventListener("DOMContentLoaded", () => {
-    const participants = loadParticipants();
-    if (participants.length > 0) {
-        generateTestEvents(participants);
-    }
-});
-//load day 1 events
-const participants = loadParticipants();
-generateDayOneEvents(participants);
+            const masters = participants.filter(p => p.type === "master");
 
-</script>
-        </script>
+            masters.forEach(master => {
+                const servantName = master.servantName || "Unknown Servant";
+                events += `
+                    <p>
+                        <img src="${master.picture}" width="50" style="vertical-align:middle;">
+                        <strong>${master.name}</strong> summons <strong>${servantName}</strong>.
+                    </p>
+                `;
+            });
+
+            eventLog.innerHTML = events;
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            console.log("Simulation page loaded");
+            const participants = loadParticipants();
+
+            if (participants.length > 0) {
+                generateDayOneEvents(participants);
+            }
+        });
+    </script>
 </body>
 </html>
