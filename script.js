@@ -150,20 +150,26 @@ function saveParticipantsAndStartSimulation() {
     masterContainers.forEach((masterContainer, index) => {
         let nameInput = masterContainer.querySelector(".master-name");
         let servantDropdown = masterContainer.querySelector(".servant-select");
-
+    
+        // Get the master name, fallback to default "Master X" if not provided
         let name = nameInput ? nameInput.value || `Master ${index + 1}` : `Master ${index + 1}`;
-        let pictureUrl = masterContainer.querySelector(".master-img").src;  // directly use displayed image
-
-        let servantValue = servantDropdown ? servantDropdown.value || "Unknown" : "Unknown";
-
+    
+        // Get the displayed image's src URL
+        let pictureUrl = masterContainer.querySelector(".master-img").src;
+    
+        // Get the selected servant's ID and name from the dropdown
+        let servantId = servantDropdown ? servantDropdown.value || "Unknown" : "Unknown";
+        let servantName = servantDropdown ? servantDropdown.options[servantDropdown.selectedIndex].dataset.name || "Unknown" : "Unknown";
+    
+        // Prepare the master data object
         let masterData = {
             name: name,
             picture: pictureUrl,
             status: "alive",
-            type: "master",
-            servantId: servantId,
-            servantName: servantName
-        };
+        type: "master",
+        servantId: servantId,  // Store the servant's ID
+        servantName: servantName // Store the servant's name
+    };
 
         participants.push(masterData);
     });
