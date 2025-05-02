@@ -151,24 +151,26 @@ function saveParticipantsAndStartSimulation() {
         let nameInput = masterContainer.querySelector(".master-name");
         let servantDropdown = masterContainer.querySelector(".servant-select");
     
-        // Get the master name, fallback to default "Master X" if not provided
         let name = nameInput ? nameInput.value || `Master ${index + 1}` : `Master ${index + 1}`;
-    
-        // Get the displayed image's src URL
         let pictureUrl = masterContainer.querySelector(".master-img").src;
     
-        // Ensure servantDropdown exists and get the selected servant's ID and name
-        let servantId = "Unknown"; // Default value
-        let servantName = "Unknown"; // Default value
+        // Get selected servant ID and name
+        let servantId = "Unknown";
+        let servantName = "Unknown";
     
         if (servantDropdown) {
-            servantId = servantDropdown.value || "Unknown";  // Get servant ID from dropdown value
-            // Get the servant's name from the selected option's data-name attribute
+            // Get the selected servant ID from the dropdown
+            servantId = servantDropdown.value || "Unknown";
+    
+            // Get the servant name from the selected option's data-name attribute
             let selectedOption = servantDropdown.options[servantDropdown.selectedIndex];
             servantName = selectedOption ? selectedOption.dataset.name || "Unknown" : "Unknown";
         }
     
-        // Prepare the master data object
+        // Debugging log
+        console.log(`Master ${index + 1}: ${name}, Servant ID: ${servantId}, Servant Name: ${servantName}`);
+    
+        // Create master data object with servant data
         let masterData = {
             name: name,
             picture: pictureUrl,
