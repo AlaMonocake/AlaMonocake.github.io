@@ -19,49 +19,45 @@
         </div>
         
         <button class="button" id="next-day">Proceed to Next Day</button>
+        <div id="event-log"></div>
     </main>
      <!-- The script to collect participants follows -->
      <script>
-        
-    function loadParticipants() {
-    console.log("Running loadParticipants()");
-
+        console.log("Raw localStorage on load:", localStorage.getItem("participants"));
+        function loadParticipants() {
     const storedData = localStorage.getItem("participants");
-    console.log("Loaded raw data:", storedData);
+    console.log("Loaded raw data from localStorage:", storedData);
 
     if (!storedData) {
         console.error("No participants found in localStorage.");
         document.getElementById("event-log").innerHTML = "<p>No participants found. Please start from the index page.</p>";
-        return;
+        return [];
     }
 
-    const participants = JSON.parse(storedData);
-console.log("Parsed participants:", participants);  // Debugging line
+    let participants;
     try {
         participants = JSON.parse(storedData);
-    } catch (error) {
-        console.error("Error parsing participants data:", error);
-        document.getElementById("event-log").innerHTML = "<p>Error loading participants data.</p>";
-        return;
+    } catch (e) {
+        console.error("Error parsing participants JSON:", e);
+        document.getElementById("event-log").innerHTML = "<p>Failed to load participants data. Please re-enter data.</p>";
+        return [];
     }
-
-    console.log("Parsed Participants:", participants);
 
     if (!Array.isArray(participants) || participants.length === 0) {
         console.error("Participants data is empty or invalid.");
-        document.getElementById("event-log").innerHTML = "<p>No participants found. Please start from the index page.</p>";
-        return;
+        document.getElementById("event-log").innerHTML = "<p>No valid participants found. Please start from the index page.</p>";
+        return [];
     }
 
-    console.log("Event log element found:", document.getElementById("event-log"));
+    console.log("Loaded Participants:", participants);
     return participants;
-};
-//actually load participants
-document.addEventListener("DOMContentLoaded", loadParticipants);
-document.addEventListener("DOMContentLoaded", () => {
-        console.log("Simulation page loaded");
-        loadParticipants();
-    });
+}
+window.addEventListener("DOMContentLoaded", () => {
+    const participants = loadParticipants();
+    if (participants.length > 0) {
+        generateTestEvents(participants);
+    }
+});
 </script>
         </script>
 </body>

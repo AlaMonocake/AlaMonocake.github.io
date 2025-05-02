@@ -146,28 +146,28 @@ function saveParticipantsAndStartSimulation() {
     let masterContainers = document.querySelectorAll(".master");
     let participants = [];
 
-    masterContainers.forEach((masterContainer, index) => {
-        let name = masterContainer.querySelector(".master-name").value || `Master ${index + 1}`;
-        let picture = masterContainer.querySelector(".master-picture").value || "https://via.placeholder.com/50";
-        let servantDropdown = masterContainer.querySelector(".servant-select");
-        let servant = servantDropdown ? servantDropdown.value : "Unknown";
+    masterContainers.forEach((container, index) => {
+        let nameInput = container.querySelector(".master-name");
+        let pictureInput = container.querySelector(".master-picture");
+        let servantDropdown = container.parentElement.querySelector(".servant-select");
 
-        console.log(`Master ${index + 1}: Servant Selected ->`, servant);  // Debugging line
-
-        participants.push({
-            name: name,
-            picture: picture,
+        let participant = {
+            name: nameInput ? nameInput.value || `Master ${index + 1}` : `Master ${index + 1}`,
+            picture: pictureInput ? pictureInput.value || "https://via.placeholder.com/50" : "https://via.placeholder.com/50",
             status: "alive",
             type: "master",
-            servant: servant
-        });
+            servant: servantDropdown ? servantDropdown.value || "Unknown" : "Unknown"
+        };
+
+        participants.push(participant);
     });
 
-    console.log("Final participants before saving:", participants);
+    // Save to localStorage
     localStorage.setItem("participants", JSON.stringify(participants));
-
-    console.log("Saved to localStorage!");
-    window.location.href = "simulation.html";  // Redirect to the simulation page
+setTimeout(() => {
+    window.location.href = "simulation.html";
+}, 100);  // 100 ms delay to ensure save completes
+console.log("Just saved to localStorage:", localStorage.getItem("participants"));
 }
 
 //code to attach the above function to the button:
