@@ -75,7 +75,7 @@ function populateServantDropdown(servantDataArray) {
             option.value = servant.id; // Use Servant ID
             option.textContent = servant.name;
             option.dataset.name = servant.name;
-            servantSelect.appendChild(option);
+            dropdown.appendChild(option);
         });
     });
 }
