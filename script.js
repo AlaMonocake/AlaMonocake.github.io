@@ -82,11 +82,7 @@ function populateServantDropdown(servantDataArray) {
 fetchServantData();
 //now the code for the servant randomizing
 document.addEventListener("DOMContentLoaded", function () {
-    let servantDropdown = masterContainer.querySelector(".servant-select");
-    let selectedOption = servantDropdown.options[servantDropdown.selectedIndex];
-    let servantId = selectedOption.value || "Unknown";
-    let servantName = selectedOption.text || "Unknown Servant";
-
+    const servantDropdowns = document.querySelectorAll(".servant-select");
     const randomizeButtons = document.querySelectorAll(".randomize-servant");
     let servantList = [];
     
@@ -163,14 +159,7 @@ function saveParticipantsAndStartSimulation() {
             servant: servantDropdown ? servantDropdown.value || "Unknown" : "Unknown"
         };
 
-        participants.push({
-    name: nameInput.value || `Master ${index + 1}`,
-    picture: pictureInput.value || "https://via.placeholder.com/50",
-    status: "alive",
-    type: "master",
-    servant: servantName // <-- we now store the name, not just the ID
-});
-
+        participants.push(participant);
     });
 
     // Save to localStorage
@@ -178,7 +167,6 @@ function saveParticipantsAndStartSimulation() {
 setTimeout(() => {
     window.location.href = "simulation.html";
 }, 100);  // 100 ms delay to ensure save completes
-console.log("Just saved to localStorage:", localStorage.getItem("participants"));
 }
 
 //code to attach the above function to the button:
@@ -191,23 +179,3 @@ document.addEventListener("DOMContentLoaded", function () {
         console.error("Start Simulation button not found!");
     }
 });
-//day 1 fixed events
-function generateDayOneEvents(participants) {
-    const eventLog = document.getElementById("event-log");
-    let events = `<h2>Day 1: Summoning</h2>`;
-
-    // Filter only masters (skip servants if they’re separate objects)
-    const masters = participants.filter(p => p.type === "master");
-
-    masters.forEach(master => {
-        let servantName = master.servantName || "Unknown Servant";
-        events += `
-            <p>
-                <img src="${master.picture}" width="50" style="vertical-align:middle;">
-                <strong>${master.name}</strong> summons <strong>${servantName}</strong>.
-            </p>
-        `;
-    });
-
-    eventLog.innerHTML = events;
-}
