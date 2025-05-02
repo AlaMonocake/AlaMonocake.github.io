@@ -34,11 +34,11 @@ header {
 
 /* Form Styles */
 .form-container {
-    width: 200px;                /* Fixed width for each container */
+    width: 13%;                /* Fixed width for each container, at 13% all masters show on one row rn */
     display: flex;               /* Flexbox for Master and Servant sections */
     flex-direction: column;      /* Ensures Master and Servant stack vertically */
     background-color:rgb(51, 27, 27);   /* Background color */
-    padding: 10px;
+    padding: 5px 10px 5px 10px;
     border: 1px solid #ff4444;      /* Border around each container */
     border-radius: 10px;
     box-sizing: border-box;      /* Ensures padding is included in width */
