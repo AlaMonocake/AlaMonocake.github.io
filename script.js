@@ -73,8 +73,9 @@ function populateServantDropdown(servantDataArray) {
         servantDataArray.forEach(servant => {
             const option = document.createElement("option");
             option.value = servant.id; // Use Servant ID
-            option.textContent = servant.name; // Use Servant Name
-            dropdown.appendChild(option);
+            option.textContent = servant.name;
+            option.dataset.name = servant.name;
+            servantSelect.appendChild(option);
         });
     });
 }
@@ -160,7 +161,8 @@ function saveParticipantsAndStartSimulation() {
             picture: pictureUrl,
             status: "alive",
             type: "master",
-            servant: servantValue
+            servantId: servantId,
+            servantName: servantName
         };
 
         participants.push(masterData);

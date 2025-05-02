@@ -47,22 +47,20 @@
 
         function generateDayOneEvents(participants) {
             const eventLog = document.getElementById("event-log");
-            let events = `<h2>Day 1: Summoning</h2>`;
+            let events = `<h2>Day 1: The Summoning</h2>`;
 
             const masters = participants.filter(p => p.type === "master");
 
-            masters.forEach(master => {
-                const servantName = master.servantName || "Unknown Servant";
-                events += `
-                    <p>
-                        <img src="${master.picture}" width="50" style="vertical-align:middle;">
-                        <strong>${master.name}</strong> summons <strong>${servantName}</strong>.
-                    </p>
-                `;
-            });
-
-            eventLog.innerHTML = events;
+    masters.forEach(master => {
+        if (master.servantName && master.servantName !== "Unknown") {
+            events += `<p><img src="${master.picture}" width="50"> <strong>${master.name}</strong> summons <strong>${master.servantName}</strong>.</p>`;
+        } else {
+            events += `<p><img src="${master.picture}" width="50"> <strong>${master.name}</strong> summons an unknown servant.</p>`;
         }
+    });
+
+    eventLog.innerHTML = events;
+}
 
         document.addEventListener("DOMContentLoaded", () => {
             console.log("Simulation page loaded");
