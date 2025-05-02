@@ -146,27 +146,30 @@ function saveParticipantsAndStartSimulation() {
     let masterContainers = document.querySelectorAll(".master");
     let participants = [];
 
-    masterContainers.forEach((container, index) => {
-        let nameInput = container.querySelector(".master-name");
-        let pictureInput = container.querySelector(".master-picture");
-        let servantDropdown = container.parentElement.querySelector(".servant-select");
+    masterContainers.forEach((masterContainer, index) => {
+        let nameInput = masterContainer.querySelector(".master-name");
+        let servantDropdown = masterContainer.querySelector(".servant-select");
 
-        let participant = {
-            name: nameInput ? nameInput.value || `Master ${index + 1}` : `Master ${index + 1}`,
-            picture: pictureInput ? pictureInput.value || "https://via.placeholder.com/50" : "https://via.placeholder.com/50",
+        let name = nameInput ? nameInput.value || `Master ${index + 1}` : `Master ${index + 1}`;
+        let pictureUrl = masterContainer.querySelector(".master-img").src;  // directly use displayed image
+
+        let servantValue = servantDropdown ? servantDropdown.value || "Unknown" : "Unknown";
+
+        let masterData = {
+            name: name,
+            picture: pictureUrl,
             status: "alive",
             type: "master",
-            servant: servantDropdown ? servantDropdown.value || "Unknown" : "Unknown"
+            servant: servantValue
         };
 
-        participants.push(participant);
+        participants.push(masterData);
     });
 
-    // Save to localStorage
+    console.log("Saved participants:", participants);
     localStorage.setItem("participants", JSON.stringify(participants));
-setTimeout(() => {
+
     window.location.href = "simulation.html";
-}, 100);  // 100 ms delay to ensure save completes
 }
 
 //code to attach the above function to the button:
