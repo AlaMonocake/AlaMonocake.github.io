@@ -4,22 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Holy Grail War Simulator</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="styles.css">
+    <script defer src="simulation.js"></script>
+    <script defer src="randomizer.js"></script>
 </head>
 <body>
     <header>
-        <h1 class="title">HOLY GRAIL WAR SIMULATOR</h1>
-        <h2 id="day-counter">Day 1</h2>
+        <h1>HOLY GRAIL WAR SIMULATOR</h1>
     </header>
     
     <main>
-        
+        <h2 id="day-counter">Day 1</h2>
         <div id="event-log" class="event-container">
             <!-- Events will be inserted here by JavaScript -->
         </div>
         
-        <button class="button" id="next-day">Proceed to Next Day</button>
-        <div id="event-log"></div>
+        <button id="next-day">Proceed to Next Day</button>
     </main>
      <!-- The script to collect participants follows -->
      <script>
@@ -58,6 +58,10 @@ window.addEventListener("DOMContentLoaded", () => {
         generateTestEvents(participants);
     }
 });
+//load day 1 events
+const participants = loadParticipants();
+generateDayOneEvents(participants);
+
 </script>
         </script>
 </body>
