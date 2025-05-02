@@ -11,14 +11,17 @@
         <h1 class="title">HOLY GRAIL WAR SIMULATOR</h1>
         <h2 id="day-counter">Day 1</h2>
     </header>
-
-<body>
-    <h1>Holy Grail War Simulation</h1>
-    <div id="event-log">
-        <p>Loading simulation...</p>
-    </div>
-
-    <script>
+    
+    <main>
+        
+        <div id="event-log" class="event-container">
+            <!-- Events will be inserted here by JavaScript -->
+        </div>
+        
+        <button class="button" id="next-day">Proceed to Next Day</button>
+    </main>
+     <!-- The script to collect participants follows -->
+     <script>
         function loadParticipants() {
             console.log("Running loadParticipants()");
             const rawData = localStorage.getItem("participants");
