@@ -118,28 +118,28 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     
     
-    function randomizeServant(index) {
-        if (servantList.length === 0) return;
-        
-        const randomServant = servantList[Math.floor(Math.random() * servantList.length)];
-        const dropdown = servantDropdowns[index];
-        
-        if (dropdown) {
-            const matchedValue = findMatchingDropdownOption(dropdown, randomServant.name);
-            if (matchedValue) {
-                dropdown.value = matchedValue; // Set the dropdown value to the matched servant ID
-                dropdown.selectedIndex = [...dropdown.options].findIndex(opt => opt.value === matchedValue);
-            } else {
-                console.warn(`Servant with name ${randomServant.name} not found in dropdown options.`);
-            }
-        }
-        
-        const servantImage = document.querySelectorAll(".servant-img")[index];
-        if (servantImage) {
-            servantImage.src = randomServant.image; // Update the image source
+function randomizeServant(index) {
+    if (servantList.length === 0) return;
+    
+    const randomServant = servantList[Math.floor(Math.random() * servantList.length)];
+    const dropdown = servantDropdowns[index];
+    
+    if (dropdown) {
+        const matchedValue = findMatchingDropdownOption(dropdown, randomServant.name);
+        if (matchedValue) {
+            dropdown.value = matchedValue; // Set the dropdown value to the matched servant ID
+            dropdown.selectedIndex = [...dropdown.options].findIndex(opt => opt.value === matchedValue);
+        } else {
+            console.warn(`Servant with name ${randomServant.name} not found in dropdown options.`);
         }
     }
     
+    const servantImage = document.querySelectorAll(".servant-img")[index];
+    if (servantImage) {
+        servantImage.src = randomServant.image; // Update the image source
+    }
+}
+
     
     fetchServantList().then(() => {
         randomizeButtons.forEach((button, index) => {
@@ -158,27 +158,30 @@ function saveParticipantsAndStartSimulation() {
 
     masterContainers.forEach((masterContainer, index) => {
         let nameInput = masterContainer.querySelector(".master-name");
-        console.log(masterContainer.innerHTML);  // Log the contents of the master container
-        // Updated to find the servant dropdown inside the servant-selection div
-        let servantDropdown = masterContainer.querySelector(".servant-selection .servant-select");
+        console.log(masterContainer.innerHTML);
+    
+        // LOOK FOR THE NEXT SIBLING .servant-selection
+        let servantSelection = masterContainer.nextElementSibling.querySelector(".servant-selection");
+        let servantDropdown = servantSelection ? servantSelection.querySelector(".servant-select") : null;
+    
         let pictureEl = masterContainer.querySelector(".master-img");
-
+    
         let name = nameInput ? nameInput.value || `Master ${index + 1}` : `Master ${index + 1}`;
         let pictureUrl = pictureEl ? pictureEl.src : "";
-
+    
         let servantId = "Unknown";
         let servantName = "Unknown";
-
+    
         if (servantDropdown) {
             const selectedIndex = servantDropdown.selectedIndex;
             const selectedOption = servantDropdown.options[selectedIndex];
-
+    
             if (selectedOption) {
                 servantId = selectedOption.value || "Unknown";
                 servantName = selectedOption.dataset && selectedOption.dataset.name
                     ? selectedOption.dataset.name
                     : selectedOption.textContent || "Unknown";
-
+    
                 console.log(`Selected Servant (from option): id=${servantId}, name=${servantName}`);
             } else {
                 console.warn(`No selected option found in dropdown index ${index}`);
@@ -186,7 +189,7 @@ function saveParticipantsAndStartSimulation() {
         } else {
             console.warn(`No servant dropdown found for master container index ${index}`);
         }
-
+    
         let masterData = {
             name: name,
             picture: pictureUrl,
@@ -195,16 +198,16 @@ function saveParticipantsAndStartSimulation() {
             servantId: servantId,
             servantName: servantName
         };
-
+    
         participants.push(masterData);
     });
+    
 
     console.log("Saved participants:", participants);
     localStorage.setItem("participants", JSON.stringify(participants));
 
     window.location.href = "simulation.html";
 }
-
 
 
 //code to attach the above function to the button:
