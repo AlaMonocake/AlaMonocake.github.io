@@ -188,7 +188,7 @@ function saveParticipantsAndStartSimulation() {
             status: "alive",
             type: "master",
             servantId: servantId, // Store the servant's ID
-            servantName: servantName // Store the servant's name
+            servantName: servantName, // Store the servant's name
             servantImage: servantImageUrl   // NEW: Servant's image URL
         };
 
