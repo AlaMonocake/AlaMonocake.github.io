@@ -158,38 +158,40 @@ function saveParticipantsAndStartSimulation() {
 
     masterContainers.forEach((masterContainer, index) => {
         let nameInput = masterContainer.querySelector(".master-name");
-        console.log(masterContainer.innerHTML);
-    
-        // LOOK FOR THE NEXT SIBLING .servant-selection
-        let servantSelection = masterContainer.nextElementSibling.querySelector(".servant-selection");
-        let servantDropdown = servantSelection ? servantSelection.querySelector(".servant-select") : null;
-    
         let pictureEl = masterContainer.querySelector(".master-img");
-    
-        let name = nameInput ? nameInput.value || `Master ${index + 1}` : `Master ${index + 1}`;
+
+        let name = nameInput ? nameInput.value.trim() || `Master ${index + 1}` : `Master ${index + 1}`;
         let pictureUrl = pictureEl ? pictureEl.src : "";
-    
+
+        // ✅ Find the NEXT .servant-selection block after the master container
+        let servantSelectionBlock = masterContainer.nextElementSibling;
+        let servantDropdown = null;
+
+        if (servantSelectionBlock && servantSelectionBlock.classList.contains("servant-selection")) {
+            servantDropdown = servantSelectionBlock.querySelector(".servant-select");
+        } else {
+            console.warn(`No .servant-selection found for master index ${index}`);
+        }
+
         let servantId = "Unknown";
         let servantName = "Unknown";
-    
+
         if (servantDropdown) {
             const selectedIndex = servantDropdown.selectedIndex;
             const selectedOption = servantDropdown.options[selectedIndex];
-    
+
             if (selectedOption) {
                 servantId = selectedOption.value || "Unknown";
                 servantName = selectedOption.dataset && selectedOption.dataset.name
                     ? selectedOption.dataset.name
                     : selectedOption.textContent || "Unknown";
-    
+
                 console.log(`Selected Servant (from option): id=${servantId}, name=${servantName}`);
             } else {
-                console.warn(`No selected option found in dropdown index ${index}`);
+                console.warn(`No selected option in servant dropdown for master index ${index}`);
             }
-        } else {
-            console.warn(`No servant dropdown found for master container index ${index}`);
         }
-    
+
         let masterData = {
             name: name,
             picture: pictureUrl,
@@ -198,16 +200,16 @@ function saveParticipantsAndStartSimulation() {
             servantId: servantId,
             servantName: servantName
         };
-    
+
         participants.push(masterData);
     });
-    
 
     console.log("Saved participants:", participants);
     localStorage.setItem("participants", JSON.stringify(participants));
 
     window.location.href = "simulation.html";
 }
+
 
 
 //code to attach the above function to the button:
