@@ -32,55 +32,6 @@ console.log(document.querySelectorAll(".master-img"));
 window.onload = function() {
     console.log("Page fully loaded! Fetching Servant data...");
     fetchServantData();};
-//now the code for the servant data:
-async function fetchServantData() {
-    const url = 'https://api.atlasacademy.io/export/NA/basic_servant.json';
-
-    try {
-        console.log("Fetching Servant List...");
-        const response = await fetch(url);
-        const servantsList = await response.json();
-
-        if (!Array.isArray(servantsList)) {
-            console.error("Invalid response: Expected an array but got", servantsList);
-            return;
-        }
-
-        console.log("Servants List Fetched:", servantsList);
-
-        // Prepare an array to store only necessary data
-        const servantDataArray = servantsList.map(servant => ({
-            id: servant.id,
-            name: servant.name,
-            image: servant.face,  // This contains their default portrait
-            hasIndependentAction: false // Placeholder, since this isn't in basic_servant.json
-        }));
-
-        console.log("Final Servant Data Array:", servantDataArray);
-        populateServantDropdown(servantDataArray);
-    } catch (error) {
-        console.error("Error fetching Servant data:", error);
-    }
-}
-// Example function to populate a dropdown with Servant names
-function populateServantDropdown(servantDataArray) {
-    // Select ALL servant dropdowns using the class
-    document.querySelectorAll(".servant-select").forEach((dropdown) => {
-        // Clear existing options except the default "Choose a Servant"
-        dropdown.innerHTML = '<option value="">Choose a Servant</option>';
-        
-        // Add each Servant to the dropdown
-        servantDataArray.forEach(servant => {
-            const option = document.createElement("option");
-            option.value = servant.id; // Use Servant ID
-            option.textContent = servant.name;
-            option.dataset.name = servant.name;
-            dropdown.appendChild(option);  // <-- fixed here
-        });
-    });
-}
-// Call the function to fetch and process Servant data
-fetchServantData();
 // now the code for the servant data:
 async function fetchServantData() {
     const url = 'https://api.atlasacademy.io/export/NA/basic_servant.json';
@@ -200,7 +151,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-    
     
 //simulation button function:
 function saveParticipantsAndStartSimulation() {
