@@ -180,6 +180,8 @@ function saveParticipantsAndStartSimulation() {
         console.log(`Master ${index + 1}: ${name}, Servant ID: ${servantId}, Servant Name: ${servantName}`);
 
         // Create master data object with servant data
+        let servantImageUrl = masterContainer.querySelector(".servant-img").src;
+
         let masterData = {
             name: name,
             picture: pictureUrl,
@@ -187,6 +189,7 @@ function saveParticipantsAndStartSimulation() {
             type: "master",
             servantId: servantId, // Store the servant's ID
             servantName: servantName // Store the servant's name
+            servantImage: servantImageUrl   // NEW: Servant's image URL
         };
 
         participants.push(masterData);
