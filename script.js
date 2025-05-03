@@ -153,20 +153,20 @@ function randomizeServant(index) {
     
 //simulation button function:
 function saveParticipantsAndStartSimulation() {
-    let masterContainers = document.querySelectorAll(".master");
-    let servantSelections = document.querySelectorAll(".servant-selection");
+    let teamContainers = document.querySelectorAll(".form-container");
     let participants = [];
 
-    masterContainers.forEach((masterContainer, index) => {
+    teamContainers.forEach((teamContainer, index) => {
+        let masterContainer = teamContainer.querySelector(".master");
+        let servantContainer = teamContainer.querySelector(".servant-selection");
+
         let nameInput = masterContainer.querySelector(".master-name");
         let pictureEl = masterContainer.querySelector(".master-img");
 
         let name = nameInput ? nameInput.value.trim() || `Master ${index + 1}` : `Master ${index + 1}`;
         let pictureUrl = pictureEl ? pictureEl.src : "";
 
-        // ✅ Get the servant-selection block at the same index
-        let servantSelectionBlock = servantSelections[index];
-        let servantDropdown = servantSelectionBlock ? servantSelectionBlock.querySelector(".servant-select") : null;
+        let servantDropdown = servantContainer ? servantContainer.querySelector(".servant-select") : null;
 
         let servantId = "Unknown";
         let servantName = "Unknown";
@@ -177,16 +177,14 @@ function saveParticipantsAndStartSimulation() {
 
             if (selectedOption) {
                 servantId = selectedOption.value || "Unknown";
-                servantName = selectedOption.dataset && selectedOption.dataset.name
-                    ? selectedOption.dataset.name
-                    : selectedOption.textContent || "Unknown";
+                servantName = selectedOption.textContent || "Unknown";
 
-                console.log(`Selected Servant (from option): id=${servantId}, name=${servantName}`);
+                console.log(`Team ${index + 1} - Selected Servant: id=${servantId}, name=${servantName}`);
             } else {
-                console.warn(`No selected option in servant dropdown for master index ${index}`);
+                console.warn(`Team ${index + 1} - No selected option in servant dropdown`);
             }
         } else {
-            console.warn(`No servant dropdown found for master index ${index}`);
+            console.warn(`Team ${index + 1} - No servant dropdown found`);
         }
 
         let masterData = {
@@ -206,7 +204,6 @@ function saveParticipantsAndStartSimulation() {
 
     window.location.href = "simulation.html";
 }
-
 
 
 //code to attach the above function to the button:
