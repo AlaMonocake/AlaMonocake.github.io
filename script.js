@@ -164,36 +164,42 @@ function saveParticipantsAndStartSimulation() {
         let name = nameInput ? nameInput.value || `Master ${index + 1}` : `Master ${index + 1}`;
         let pictureUrl = masterContainer.querySelector(".master-img").src;
 
-        // ✅ Get selected servant ID and name safely
-        let servantId = "Unknown";
-        let servantName = "Unknown";
+        // Ensure servantId and servantName are properly initialized and checked
+        let servantId = "Unknown"; // Default to Unknown
+        let servantName = "Unknown"; // Default to Unknown
 
         if (servantDropdown && servantDropdown.selectedIndex >= 0) {
             const selectedOption = servantDropdown.options[servantDropdown.selectedIndex];
+
+            // Safely get servantId and servantName from the selected option
             servantId = selectedOption.value || "Unknown";
             servantName = selectedOption.dataset.name || selectedOption.textContent || "Unknown";
         }
 
+        // Debugging: Log details about the servant
         console.log(`Master ${index + 1}: ${name}, Servant ID: ${servantId}, Servant Name: ${servantName}`);
 
+        // Create master data object with servant data
         let masterData = {
             name: name,
             picture: pictureUrl,
             status: "alive",
             type: "master",
-            servantId: servantId,
-            servantName: servantName
+            servantId: servantId, // Store the servant's ID
+            servantName: servantName // Store the servant's name
         };
 
         participants.push(masterData);
     });
 
     console.log("Saved participants:", participants);
+
+    // Save participants to localStorage
     localStorage.setItem("participants", JSON.stringify(participants));
 
+    // Redirect to the simulation page
     window.location.href = "simulation.html";
 }
-
 //code to attach the above function to the button:
 document.addEventListener("DOMContentLoaded", function () {
     const startButton = document.getElementById("simulation");
