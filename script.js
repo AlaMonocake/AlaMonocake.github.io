@@ -164,7 +164,7 @@ function saveParticipantsAndStartSimulation() {
     
             // Get the servant name from the selected option's data-name attribute
             let selectedOption = servantDropdown.options[servantDropdown.selectedIndex];
-            servantName = selectedOption ? selectedOption.dataset.name || "Unknown" : "Unknown";
+            servantName = selectedOption ? selectedOption.textContent || "Unknown" : "Unknown";
         }
     
         // Debugging log
