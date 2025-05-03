@@ -159,6 +159,7 @@ function saveParticipantsAndStartSimulation() {
     masterContainers.forEach((masterContainer, index) => {
         let nameInput = masterContainer.querySelector(".master-name");
         console.log(masterContainer.innerHTML);  // Log the contents of the master container
+        // Updated to find the servant dropdown inside the servant-selection div
         let servantDropdown = masterContainer.querySelector(".servant-selection .servant-select");
         let pictureEl = masterContainer.querySelector(".master-img");
 
@@ -174,8 +175,9 @@ function saveParticipantsAndStartSimulation() {
 
             if (selectedOption) {
                 servantId = selectedOption.value || "Unknown";
-                servantName = selectedOption.dataset.name || selectedOption.textContent || "Unknown";
-            }
+                servantName = selectedOption.dataset && selectedOption.dataset.name
+                    ? selectedOption.dataset.name
+                    : selectedOption.textContent || "Unknown";
 
                 console.log(`Selected Servant (from option): id=${servantId}, name=${servantName}`);
             } else {
@@ -202,6 +204,7 @@ function saveParticipantsAndStartSimulation() {
 
     window.location.href = "simulation.html";
 }
+
 
 
 //code to attach the above function to the button:
