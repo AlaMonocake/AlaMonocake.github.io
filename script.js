@@ -154,7 +154,7 @@ function saveParticipantsAndStartSimulation() {
     masterContainers.forEach((masterContainer, index) => {
         let nameInput = masterContainer.querySelector(".master-name");
         console.log(masterContainer.innerHTML);  // Log the contents of the master container
-        let servantDropdown = masterContainer.querySelector(".servant-select");
+        let servantDropdown = masterContainer.querySelector(".servant-selection .servant-select");
         let pictureEl = masterContainer.querySelector(".master-img");
 
         let name = nameInput ? nameInput.value || `Master ${index + 1}` : `Master ${index + 1}`;
