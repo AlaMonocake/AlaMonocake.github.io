@@ -126,13 +126,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (matchedValue) {
                 dropdown.value = matchedValue;
 
-                // ✅ NEW: also set selectedIndex properly
-                for (let i = 0; i < dropdown.options.length; i++) {
-                    if (dropdown.options[i].value === matchedValue) {
-                        dropdown.selectedIndex = i;
-                        break;
-                    }
-                }
+                dropdown.selectedIndex = [...dropdown.options].findIndex(opt => opt.value === matchedValue);
             }
         }
         
