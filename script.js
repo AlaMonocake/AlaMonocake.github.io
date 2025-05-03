@@ -73,13 +73,14 @@ function populateServantDropdown(servantDataArray) {
         // Add each Servant to the dropdown
         servantDataArray.forEach(servant => {
             const option = document.createElement("option");
-            option.value = servant.id; // Use Servant ID
-            option.textContent = servant.name;
-            option.dataset.name = servant.name;
-            dropdown.appendChild(option);  // <-- fixed here
+            option.value = servant.id;  // Use Servant ID
+            option.textContent = servant.name; // Set name to text content
+            option.dataset.name = servant.name; // Store name in dataset
+            dropdown.appendChild(option);  // <-- fix here
         });
     });
 }
+
 
 // Call the function to fetch and process Servant data
 fetchServantData();
@@ -108,12 +109,14 @@ document.addEventListener("DOMContentLoaded", function () {
     
     function findMatchingDropdownOption(dropdown, servantName) {
         for (let option of dropdown.options) {
-            if (option.textContent.includes(servantName)) {
-                return option.value;
+            // Use trim() to remove any leading/trailing spaces
+            if (option.textContent.trim() === servantName.trim()) {
+                return option.value; // Return the ID of the matched servant
             }
         }
-        return ""; 
+        return ""; // Return empty if no match is found
     }
+    
     
     function randomizeServant(index) {
         if (servantList.length === 0) return;
@@ -124,17 +127,19 @@ document.addEventListener("DOMContentLoaded", function () {
         if (dropdown) {
             const matchedValue = findMatchingDropdownOption(dropdown, randomServant.name);
             if (matchedValue) {
-                dropdown.value = matchedValue;
-
+                dropdown.value = matchedValue; // Set the dropdown value to the matched servant ID
                 dropdown.selectedIndex = [...dropdown.options].findIndex(opt => opt.value === matchedValue);
+            } else {
+                console.warn(`Servant with name ${randomServant.name} not found in dropdown options.`);
             }
         }
         
         const servantImage = document.querySelectorAll(".servant-img")[index];
         if (servantImage) {
-            servantImage.src = randomServant.image;
+            servantImage.src = randomServant.image; // Update the image source
         }
     }
+    
     
     fetchServantList().then(() => {
         randomizeButtons.forEach((button, index) => {
@@ -169,9 +174,8 @@ function saveParticipantsAndStartSimulation() {
 
             if (selectedOption) {
                 servantId = selectedOption.value || "Unknown";
-                servantName = selectedOption.dataset && selectedOption.dataset.name
-                    ? selectedOption.dataset.name
-                    : selectedOption.textContent || "Unknown";
+                servantName = selectedOption.dataset.name || selectedOption.textContent || "Unknown";
+            }
 
                 console.log(`Selected Servant (from option): id=${servantId}, name=${servantName}`);
             } else {
