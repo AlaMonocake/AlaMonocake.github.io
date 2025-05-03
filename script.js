@@ -154,9 +154,14 @@ function saveParticipantsAndStartSimulation() {
         let name = nameInput ? nameInput.value || `Master ${index + 1}` : `Master ${index + 1}`;
         let pictureUrl = masterContainer.querySelector(".master-img").src;
     
-        // Get selected servant ID and name
-        let servantId = "Unknown";
-        let servantName = "Unknown";
+        if (servantDropdown) {
+            console.log("Dropdown selectedIndex:", servantDropdown.selectedIndex);
+            console.log("Dropdown selected option:", servantDropdown.options[servantDropdown.selectedIndex]);
+        
+            let selectedOption = servantDropdown.options[servantDropdown.selectedIndex];
+            servantId = selectedOption ? selectedOption.value || "Unknown" : "Unknown";
+            servantName = selectedOption ? selectedOption.textContent || "Unknown" : "Unknown";
+        }
     
         if (servantDropdown) {
             // Get the selected servant ID from the dropdown
