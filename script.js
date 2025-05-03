@@ -154,6 +154,7 @@ function randomizeServant(index) {
 //simulation button function:
 function saveParticipantsAndStartSimulation() {
     let masterContainers = document.querySelectorAll(".master");
+    let servantSelections = document.querySelectorAll(".servant-selection");
     let participants = [];
 
     masterContainers.forEach((masterContainer, index) => {
@@ -163,15 +164,9 @@ function saveParticipantsAndStartSimulation() {
         let name = nameInput ? nameInput.value.trim() || `Master ${index + 1}` : `Master ${index + 1}`;
         let pictureUrl = pictureEl ? pictureEl.src : "";
 
-        // ✅ Find the NEXT .servant-selection block after the master container
-        let servantSelectionBlock = masterContainer.nextElementSibling;
-        let servantDropdown = null;
-
-        if (servantSelectionBlock && servantSelectionBlock.classList.contains("servant-selection")) {
-            servantDropdown = servantSelectionBlock.querySelector(".servant-select");
-        } else {
-            console.warn(`No .servant-selection found for master index ${index}`);
-        }
+        // ✅ Get the servant-selection block at the same index
+        let servantSelectionBlock = servantSelections[index];
+        let servantDropdown = servantSelectionBlock ? servantSelectionBlock.querySelector(".servant-select") : null;
 
         let servantId = "Unknown";
         let servantName = "Unknown";
@@ -190,6 +185,8 @@ function saveParticipantsAndStartSimulation() {
             } else {
                 console.warn(`No selected option in servant dropdown for master index ${index}`);
             }
+        } else {
+            console.warn(`No servant dropdown found for master index ${index}`);
         }
 
         let masterData = {
