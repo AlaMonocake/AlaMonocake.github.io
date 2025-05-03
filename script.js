@@ -154,12 +154,13 @@ function saveParticipantsAndStartSimulation() {
     masterContainers.forEach((masterContainer, index) => {
         let nameInput = masterContainer.querySelector(".master-name");
         let servantDropdown = masterContainer.querySelector(".servant-select");
+        let pictureEl = masterContainer.querySelector(".master-img");
 
         let name = nameInput ? nameInput.value || `Master ${index + 1}` : `Master ${index + 1}`;
-        let pictureUrl = masterContainer.querySelector(".master-img").src;
+        let pictureUrl = pictureEl ? pictureEl.src : "";
 
-        let servantId = "Unknown"; // Default
-        let servantName = "Unknown"; // Default
+        let servantId = "Unknown";
+        let servantName = "Unknown";
 
         if (servantDropdown) {
             const selectedIndex = servantDropdown.selectedIndex;
@@ -167,24 +168,18 @@ function saveParticipantsAndStartSimulation() {
 
             if (selectedOption) {
                 servantId = selectedOption.value || "Unknown";
-
-                // Safely get dataset name or fallback to text
                 servantName = selectedOption.dataset && selectedOption.dataset.name
                     ? selectedOption.dataset.name
                     : selectedOption.textContent || "Unknown";
 
                 console.log(`Selected Servant (from option): id=${servantId}, name=${servantName}`);
             } else {
-                // Fallback if no selected option
-                servantId = servantDropdown.value || "Unknown";
-                servantName = "Unknown (no option selected)";
-                console.warn(`No selected option found for dropdown index ${selectedIndex}`);
+                console.warn(`No selected option found in dropdown index ${index}`);
             }
         } else {
-            console.warn("No servant dropdown found for master container.");
+            console.warn(`No servant dropdown found for master container index ${index}`);
         }
 
-        // Create master data object with servant data
         let masterData = {
             name: name,
             picture: pictureUrl,
@@ -202,6 +197,7 @@ function saveParticipantsAndStartSimulation() {
 
     window.location.href = "simulation.html";
 }
+
 
 //code to attach the above function to the button:
 document.addEventListener("DOMContentLoaded", function () {
