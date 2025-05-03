@@ -73,9 +73,11 @@ function populateServantDropdown(servantDataArray) {
         // Add each Servant to the dropdown
         servantDataArray.forEach(servant => {
             const option = document.createElement("option");
-            option.value = servant.id;  // Use Servant ID
-            option.textContent = servant.name; // Set name to text content
-            option.dataset.name = servant.name; // Store name in dataset
+            // Extract a shortname; if you have a better key, replace servant.name here
+        const shortName = servant.name.split(" ")[0];  // crude fallback: take first word like "Artoria"
+        option.value = shortName;  // store shortname for simulator matching
+        option.textContent = servant.name;  // full display name for user
+        option.dataset.id = servant.id;  // store numeric ID if needed later
             dropdown.appendChild(option);  // <-- fix here
         });
     });
@@ -176,8 +178,9 @@ function saveParticipantsAndStartSimulation() {
             const selectedOption = servantDropdown.options[selectedIndex];
 
             if (selectedOption) {
-                servantId = selectedOption.value || "Unknown";
-                servantName = selectedOption.textContent || "Unknown";
+                servantId = selectedOption.dataset.id || "Unknown";  // numeric ID if needed
+                servantName = selectedOption.value || "Unknown";  // shortname the simulator expects
+
 
                 console.log(`Team ${index + 1} - Selected Servant: id=${servantId}, name=${servantName}`);
             } else {
