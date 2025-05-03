@@ -158,45 +158,51 @@ function saveParticipantsAndStartSimulation() {
         let name = nameInput ? nameInput.value || `Master ${index + 1}` : `Master ${index + 1}`;
         let pictureUrl = masterContainer.querySelector(".master-img").src;
 
-        // Ensure servantId and servantName are properly initialized and checked
-        let servantId = "Unknown"; // Default to Unknown
-        let servantName = "Unknown"; // Default to Unknown
+        let servantId = "Unknown"; // Default
+        let servantName = "Unknown"; // Default
 
-        if (servantDropdown && servantDropdown.selectedIndex >= 0) {
-            const selectedOption = servantDropdown.options[servantDropdown.selectedIndex];
+        if (servantDropdown) {
+            const selectedIndex = servantDropdown.selectedIndex;
+            const selectedOption = servantDropdown.options[selectedIndex];
 
-            // Safely get servantId and servantName from the selected option
-            servantId = selectedOption.value || "Unknown";
-            servantName = selectedOption.dataset.name || selectedOption.textContent || "Unknown";
+            if (selectedOption) {
+                servantId = selectedOption.value || "Unknown";
+
+                // Safely get dataset name or fallback to text
+                servantName = selectedOption.dataset && selectedOption.dataset.name
+                    ? selectedOption.dataset.name
+                    : selectedOption.textContent || "Unknown";
+
+                console.log(`Selected Servant (from option): id=${servantId}, name=${servantName}`);
+            } else {
+                // Fallback if no selected option
+                servantId = servantDropdown.value || "Unknown";
+                servantName = "Unknown (no option selected)";
+                console.warn(`No selected option found for dropdown index ${selectedIndex}`);
+            }
+        } else {
+            console.warn("No servant dropdown found for master container.");
         }
 
-        // Debugging: Log details about the servant
-        console.log(`Master ${index + 1}: ${name}, Servant ID: ${servantId}, Servant Name: ${servantName}`);
-
         // Create master data object with servant data
-        let servantImageUrl = masterContainer.querySelector(".servant-img").src;
-
         let masterData = {
             name: name,
             picture: pictureUrl,
             status: "alive",
             type: "master",
-            servantId: servantId, // Store the servant's ID
-            servantName: servantName, // Store the servant's name
-            servantImage: servantImageUrl   // NEW: Servant's image URL
+            servantId: servantId,
+            servantName: servantName
         };
 
         participants.push(masterData);
     });
 
     console.log("Saved participants:", participants);
-
-    // Save participants to localStorage
     localStorage.setItem("participants", JSON.stringify(participants));
 
-    // Redirect to the simulation page
     window.location.href = "simulation.html";
 }
+
 //code to attach the above function to the button:
 document.addEventListener("DOMContentLoaded", function () {
     const startButton = document.getElementById("simulation");
