@@ -160,40 +160,30 @@ function saveParticipantsAndStartSimulation() {
     masterContainers.forEach((masterContainer, index) => {
         let nameInput = masterContainer.querySelector(".master-name");
         let servantDropdown = masterContainer.querySelector(".servant-select");
-    
+
         let name = nameInput ? nameInput.value || `Master ${index + 1}` : `Master ${index + 1}`;
         let pictureUrl = masterContainer.querySelector(".master-img").src;
-    
-        if (servantDropdown) {
-            console.log("Dropdown selectedIndex:", servantDropdown.selectedIndex);
-            console.log("Dropdown selected option:", servantDropdown.options[servantDropdown.selectedIndex]);
-        
-            let selectedOption = servantDropdown.options[servantDropdown.selectedIndex];
-            servantId = selectedOption ? selectedOption.value || "Unknown" : "Unknown";
-            servantName = selectedOption ? selectedOption.textContent || "Unknown" : "Unknown";
+
+        // ✅ Get selected servant ID and name safely
+        let servantId = "Unknown";
+        let servantName = "Unknown";
+
+        if (servantDropdown && servantDropdown.selectedIndex >= 0) {
+            const selectedOption = servantDropdown.options[servantDropdown.selectedIndex];
+            servantId = selectedOption.value || "Unknown";
+            servantName = selectedOption.dataset.name || selectedOption.textContent || "Unknown";
         }
-    
-        if (servantDropdown) {
-            // Get the selected servant ID from the dropdown
-            servantId = servantDropdown.value || "Unknown";
-    
-            // Get the servant name from the selected option's data-name attribute
-            let selectedOption = servantDropdown.options[servantDropdown.selectedIndex];
-            servantName = selectedOption ? selectedOption.textContent || "Unknown" : "Unknown";
-        }
-    
-        // Debugging log
+
         console.log(`Master ${index + 1}: ${name}, Servant ID: ${servantId}, Servant Name: ${servantName}`);
-    
-        // Create master data object with servant data
+
         let masterData = {
             name: name,
             picture: pictureUrl,
             status: "alive",
-        type: "master",
-        servantId: servantId,  // Store the servant's ID
-        servantName: servantName // Store the servant's name
-    };
+            type: "master",
+            servantId: servantId,
+            servantName: servantName
+        };
 
         participants.push(masterData);
     });
