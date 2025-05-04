@@ -1,5 +1,4 @@
 import { runRandomEvent } from './eventRunner.js';
-
 console.log("Checking if .master elements exist...");
 console.log(document.querySelectorAll(".master"));
 document.addEventListener("DOMContentLoaded", () => {
