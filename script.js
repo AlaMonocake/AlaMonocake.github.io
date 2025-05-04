@@ -1,3 +1,5 @@
+import { runRandomEvent } from './eventRunner.js';
+
 console.log("Checking if .master elements exist...");
 console.log(document.querySelectorAll(".master"));
 document.addEventListener("DOMContentLoaded", () => {
@@ -74,8 +76,8 @@ function populateServantDropdown(servantDataArray) {
         servantDataArray.forEach(servant => {
             const option = document.createElement("option");
             // Extract a shortname; if you have a better key, replace servant.name here
-        const shortName = servant.name.split(" ")[0];  // crude fallback: take first word like "Artoria"
-        option.value = shortName;  // store shortname for simulator matching
+        //const shortName = servant.name.split(" ")[0];  // crude fallback: take first word like "Artoria"
+        //option.value = shortName;  // store shortname for simulator matching
         option.textContent = servant.name;  // full display name for user
         option.dataset.id = servant.id;  // store numeric ID if needed later
             dropdown.appendChild(option);  // <-- fix here
@@ -163,9 +165,12 @@ function saveParticipantsAndStartSimulation() {
         let servantContainer = teamContainer.querySelector(".servant-selection");
 
         let nameInput = masterContainer.querySelector(".master-name");
+        let genderSelect = masterContainer.querySelector(".gender-select");
         let pictureEl = masterContainer.querySelector(".master-img");
 
         let name = nameInput ? nameInput.value.trim() || `Master ${index + 1}` : `Master ${index + 1}`;
+        let gender = genderSelect ? genderSelect.value : "nonbinary"; // fallback to nonbinary if missing
+        let pronouns = getPronouns(gender);
         let pictureUrl = pictureEl ? pictureEl.src : "";
 
         let servantDropdown = servantContainer ? servantContainer.querySelector(".servant-select") : null;
@@ -191,15 +196,29 @@ function saveParticipantsAndStartSimulation() {
         }
 
         let masterData = {
+            id: `master${index + 1}`,
             name: name,
+            gender: gender,
+            pronouns: pronouns,
             picture: pictureUrl,
             status: "alive",
             type: "master",
             servantId: servantId,
-            servantName: servantName
+        
+        };
+
+        let servantData = {
+            id: servantId,
+            name: servantName,
+            type: "servant",
+            status: "alive",
+            masterId: masterData.id,
+            hasIndependentAction: servantHasIndependentAction,
+            image: servantImage
         };
 
         participants.push(masterData);
+        participants.push(servantData);
     });
 
     console.log("Saved participants:", participants);
@@ -208,6 +227,15 @@ function saveParticipantsAndStartSimulation() {
     window.location.href = "simulation.html";
 }
 
+function getPronouns(gender) {
+    if (gender === "male") {
+        return { subject: "he", object: "him", possessive: "his" };
+    } else if (gender === "female") {
+        return { subject: "she", object: "her", possessive: "her" };
+    } else {
+        return { subject: "they", object: "them", possessive: "their" };
+    }
+}
 
 //code to attach the above function to the button:
 document.addEventListener("DOMContentLoaded", function () {
@@ -218,4 +246,66 @@ document.addEventListener("DOMContentLoaded", function () {
     } else {
         console.error("Start Simulation button not found!");
     }
+});
+
+//the code to run random events follows...?
+let currentDay = 1;
+let pastEvents = [];  // store event IDs
+let participants = JSON.parse(localStorage.getItem("participants")) || [];
+
+function processEventTemplate(template, master, servant) {
+    return template
+        .replace(/{master.name}/g, master.name)
+        .replace(/{master.pronouns.subject}/g, master.pronouns.subject)
+        .replace(/{master.pronouns.object}/g, master.pronouns.object)
+        .replace(/{master.pronouns.possessive}/g, master.pronouns.possessive)
+        .replace(/{servant.name}/g, servant ? servant.name : "no servant");
+}
+
+function runDayEvents() {
+    const aliveMasters = participants.filter(p => p.type === "master" && p.status === "alive");
+    const aliveServants = participants.filter(p => p.type === "servant" && p.status === "alive");
+
+    console.log(`===== DAY ${currentDay} =====`);
+
+    aliveMasters.forEach(master => {
+        const servant = aliveServants.find(s => s.id === master.servantId);
+
+        const validEvents = events.filter(event => {
+            const validPool = event.valid(participants, pastEvents);
+            return validPool.includes(master);
+        });
+
+        if (validEvents.length === 0) {
+            console.log(`No valid events for ${master.name}`);
+            return;
+        }
+
+        const selectedEvent = validEvents[Math.floor(Math.random() * validEvents.length)];
+
+        // Apply effects
+        selectedEvent.effects(master, servant, participants);
+
+        // Save event id
+        pastEvents.push(selectedEvent.id);
+
+        // Display event text
+        const eventText = processEventTemplate(selectedEvent.description, master, servant);
+        console.log(eventText);
+
+        const logDiv = document.getElementById("event-log");
+        logDiv.innerHTML += `<p>Day ${currentDay}: ${eventText}</p>`;
+    });
+
+    currentDay++;
+}
+
+// Run day 1 immediately after load
+window.onload = () => {
+    runDayEvents();  // runs once for each master
+};
+
+// Button for next days
+document.getElementById("next-day").addEventListener("click", () => {
+    runDayEvents();  // runs once for each alive master
 });

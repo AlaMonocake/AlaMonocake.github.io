@@ -21,6 +21,7 @@
         
         <button class="button" id="next-day">Proceed to Next Day</button>
     </main>
+    <script type="module" src="events.js"></script>
      <!-- The script to collect participants follows -->
      <script>
         function loadParticipants() {
@@ -75,6 +76,52 @@ document.addEventListener("DOMContentLoaded", () => {
         console.warn("No valid participants loaded.");
     }
 });
+
+//WE'RE DONE WITH THE ABOVE CODE. Now the event simulation code follows
+
+import { eventPool } from './events.js'; // Adjust the path if needed
+function runRandomEvent() {
+    // Ensure there are alive participants before running events
+    const aliveMasters = participants.filter(p => p.type === "master" && p.status === "alive");
+    const aliveServants = participants.filter(p => p.type === "servant" && p.status === "alive");
+
+    if (aliveMasters.length === 0) return;  // No more masters, game over
+    if (aliveServants.length === 0) return;  // No more servants, game over
+
+    // Randomly pick an event from the event pool
+    const event = eventPool[Math.floor(Math.random() * eventPool.length)];
+
+    // Select random participants for the event
+    let selected = [];
+    for (const targetType of event.targets) {
+        const pool = participants.filter(p => p.type === targetType && p.status === "alive");
+        if (pool.length === 0) return;  // Skip if no eligible targets
+        const pick = pool[Math.floor(Math.random() * pool.length)];
+        selected.push(pick);
+    }
+
+    // Apply the event's effect
+    event.effect(participants, ...selected);
+
+    // Log the event description
+    const description = event.description
+        .replace("{master}", selected[0]?.name || "Unknown")
+        .replace("{servant1}", selected[0]?.name || "Unknown")
+        .replace("{servant2}", selected[1]?.name || "Unknown");
+
+    console.log("Event:", description);
+    // Optionally log the event to a history
+    logEvent(description);
+
+    //THE EVENT HISTORY FOR DEBUGGING
+    let eventHistory = [];
+    function logEvent(description) {
+    eventHistory.push({ description, timestamp: new Date() });
+    console.log("Logged Event:", description);
+}
+
+}
+
     </script>
 </body>
 </html>
