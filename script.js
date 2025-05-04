@@ -32,7 +32,11 @@ console.log(document.querySelectorAll(".master-img"));
 }); //this was the code for updating the master pictures
 window.onload = function() {
     console.log("Page fully loaded! Fetching Servant data...");
-    fetchServantData();};
+    fetchServantData();
+
+    console.log("Starting Day 1 events...");
+    runDayEvents();
+};
 // now the code for the servant data:
 async function fetchServantData() {
     const url = 'https://api.atlasacademy.io/export/NA/basic_servant.json';
@@ -252,57 +256,55 @@ let currentDay = 1;
 let pastEvents = [];  // store event IDs
 let participants = JSON.parse(localStorage.getItem("participants")) || [];
 
-function processEventTemplate(template, master, servant) {
-    return template
-        .replace(/{master.name}/g, master.name)
-        .replace(/{master.pronouns.subject}/g, master.pronouns.subject)
-        .replace(/{master.pronouns.object}/g, master.pronouns.object)
-        .replace(/{master.pronouns.possessive}/g, master.pronouns.possessive)
-        .replace(/{servant.name}/g, servant ? servant.name : "no servant");
-}
 
 function runDayEvents() {
-    const aliveMasters = participants.filter(p => p.type === "master" && p.status === "alive");
-    const aliveServants = participants.filter(p => p.type === "servant" && p.status === "alive");
-
     console.log(`===== DAY ${currentDay} =====`);
 
-    aliveMasters.forEach(master => {
-        const servant = aliveServants.find(s => s.id === master.servantId);
+    // Loop over each event
+    events.forEach(event => {
+        const validPools = event.valid(participants);
 
-        const validEvents = events.filter(event => {
-            const validPool = event.valid(participants, pastEvents);
-            return validPool.includes(master);
-        });
-
-        if (validEvents.length === 0) {
-            console.log(`No valid events for ${master.name}`);
+        if (validPools.length === 0) {
+            console.log(`No valid targets for event ${event.id}`);
             return;
         }
 
-        const selectedEvent = validEvents[Math.floor(Math.random() * validEvents.length)];
+        // Pick one random target or pair
+        const chosen = validPools[Math.floor(Math.random() * validPools.length)];
 
-        // Apply effects
-        selectedEvent.effects(master, servant, participants);
+        if (Array.isArray(chosen)) {
+            // Multi-target event (like servant vs servant or servant-master betrayal)
+            event.effects(...chosen, participants);
 
-        // Save event id
-        pastEvents.push(selectedEvent.id);
+            // Generate event text using provided names
+            const eventText = processEventTemplate(event.description, {
+                servant1: chosen[0],
+                servant2: chosen[1],
+                master: chosen[1], // if second is master, works for betrayal template
+            });
 
-        // Display event text
-        const eventText = processEventTemplate(selectedEvent.description, master, servant);
-        console.log(eventText);
+            console.log(eventText);
+            appendEventLog(`Day ${currentDay}: ${eventText}`);
+        } else {
+            // Single-target event (just a master)
+            const master = chosen;
+            const servant = participants.find(p => p.type === "servant" && p.masterId === master.id);
 
-        const logDiv = document.getElementById("event-log");
-        logDiv.innerHTML += `<p>Day ${currentDay}: ${eventText}</p>`;
+            event.effects(master, servant, participants);
+
+            const eventText = processEventTemplate(event.description, {
+                master,
+                servant,
+            });
+
+            console.log(eventText);
+            appendEventLog(`Day ${currentDay}: ${eventText}`);
+        }
     });
 
     currentDay++;
 }
 
-// Run day 1 immediately after load
-window.onload = () => {
-    runDayEvents();  // runs once for each master
-};
 
 // Button for next days
 document.getElementById("next-day").addEventListener("click", () => {
@@ -327,34 +329,7 @@ function processEventTemplate(template, context) {
         return value;
     });
 }
-
- function runRandomEvent(participants) {
-    const aliveMasters = participants.filter(p => p.type === "master" && p.status === "alive");
-    const aliveServants = participants.filter(p => p.type === "servant" && p.status === "alive");
-
-    const randomMaster = aliveMasters[Math.floor(Math.random() * aliveMasters.length)];
-    const randomServant = participants.find(p => p.id === randomMaster.servantId);
-
-    const validEvents = events.filter(event => {
-        const validPool = event.valid(participants);
-        return validPool.includes(randomMaster);
-    });
-
-    if (validEvents.length === 0) {
-        console.warn("No valid events available.");
-        return;
-    }
-
-    const event = validEvents[Math.floor(Math.random() * validEvents.length)];
-
-    // Run effects
-    event.effects(randomMaster, randomServant, participants);
-
-    // Generate event text
-    const eventText = processEventTemplate(event.description, {
-        master: randomMaster,
-        servant: randomServant
-    });
-
-    console.log(eventText);
-}
+const eventText = processEventTemplate(selectedEvent.description, {
+    master: master,
+    servant: servant
+});

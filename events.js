@@ -3,42 +3,62 @@
 // Event pool array to store all events
 const events = [
     //Event 1: Master Death
-    {
-        id: "event_kill_master",
-        description: "{master} walks into a landmine and dies.",
-        type: "kill-master",
-        targets: ["master"], // Needs one master as the target
-        effect: (participants, master) => {
-            master.status = "dead"; // Mark master as dead
-            const servant = participants.find(p => p.type === "servant" && p.masterId === master.id);
-            if (servant && !servant.hasIndependentAction) {
-                servant.status = "dead"; // If the servant doesn't have Independent Action, they die too
+        {
+            id: "event_kill_master",
+            description: "{master.name} walks into a landmine and dies.",
+            valid: (participants) => {
+                return participants.filter(p => p.type === "master" && p.status === "alive");
+            },
+            effects: (master, servant, participants) => {
+                master.status = "dead";
+                const linkedServant = participants.find(p => p.type === "servant" && p.masterId === master.id);
+                if (linkedServant && !linkedServant.hasIndependentAction) {
+                    linkedServant.status = "dead";
+                }
             }
-        }
-    },
-    // Event 2: Duel
-    {
-        id: "event_duel",
-        description: "{servant1} fights with {servant2} to the death.",
-        type: "duel",
-        targets: ["servant", "servant"], // Needs two servants as the targets
-        effect: (participants, servant1, servant2) => {
-            const loser = Math.random() < 0.5 ? servant1 : servant2;
-            loser.status = "dead"; // Randomly pick a servant to die
-        }
-    },
-    {
-        id: "event_betrayal",
-        description: "{servant1} betrays {master}. The master is left defenseless and killed.",
-        type: "betrayal",
-        targets: ["servant", "master"],
-        effect: (participants, servant1, master) => {
-            if (servant1 && master) {
-                servant1.status = "alive"; // Servant survives
-                master.status = "dead"; // Master is dead
+        },
+    
+        {
+            id: "event_duel",
+            description: "{servant1.name} fights with {servant2.name} to the death.",
+            valid: (participants) => {
+                const aliveServants = participants.filter(p => p.type === "servant" && p.status === "alive");
+                if (aliveServants.length < 2) return [];
+                // Generate all possible pairs
+                const pairs = [];
+                for (let i = 0; i < aliveServants.length; i++) {
+                    for (let j = i + 1; j < aliveServants.length; j++) {
+                        pairs.push([aliveServants[i], aliveServants[j]]);
+                    }
+                }
+                return pairs;
+            },
+            effects: (servant1, servant2, participants) => {
+                const loser = Math.random() < 0.5 ? servant1 : servant2;
+                loser.status = "dead";
             }
-        }
-    },
+        },
+    
+        {
+            id: "event_betrayal",
+            description: "{servant1.name} betrays {master.name}. The master is left defenseless and killed.",
+            valid: (participants) => {
+                const betrayers = [];
+                const aliveServants = participants.filter(p => p.type === "servant" && p.status === "alive");
+                aliveServants.forEach(servant => {
+                    const master = participants.find(p => p.id === servant.masterId && p.status === "alive");
+                    if (master) {
+                        betrayers.push([servant, master]);
+                    }
+                });
+                return betrayers;
+            },
+            effects: (servant1, master, participants) => {
+                master.status = "dead";
+                // Servant survives (no change)
+            }
+        },
+    
     {
         id: "poison_mushroom",
         description: "{master.name} eats a poisonous mushroom!",
