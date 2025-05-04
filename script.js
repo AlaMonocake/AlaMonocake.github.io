@@ -58,7 +58,7 @@ async function fetchServantData() {
             id: servant.id,
             name: servant.name,
             image: servant.face,  // This contains their default portrait
-            hasIndependentAction: false // Placeholder, since this isn't in basic_servant.json
+            hasIndependentAction: servant.hasIndependentAction || false
         }));
 
         console.log("Final Servant Data Array:", servantDataArray);
@@ -255,6 +255,15 @@ document.addEventListener("DOMContentLoaded", function () {
 let currentDay = 1;
 let pastEvents = [];  // store event IDs
 let participants = JSON.parse(localStorage.getItem("participants")) || [];
+
+function appendEventLog(message) {
+    const logDiv = document.getElementById("event-log");
+    if (logDiv) {
+        logDiv.innerHTML += `<p>${message}</p>`;
+    } else {
+        console.error("Event log div not found.");
+    }
+}
 
 
 function runDayEvents() {
