@@ -22,7 +22,6 @@
         <button class="button" id="next-day">Proceed to Next Day</button>
     </main>
     <script type="module" src="events.js"></script>
-    <script type="module" src="eventRunner.js"></script>
      <!-- The script to collect participants follows -->
      <script>
         function loadParticipants() {
@@ -80,7 +79,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 //WE'RE DONE WITH THE ABOVE CODE. Now the event simulation code follows
 
-import { eventPool } from './events.js'; // Adjust the path if needed
+import { events } from './events.js'; // Adjust the path if needed
 function runRandomEvent() {
     // Ensure there are alive participants before running events
     const aliveMasters = participants.filter(p => p.type === "master" && p.status === "alive");
