@@ -1,7 +1,7 @@
 // events.js - Contains all event definitions for the simulation
 
 // Event pool array to store all events
-const eventPool = [
+const events = [
     //Event 1: Master Death
     {
         id: "event_kill_master",
