@@ -22,7 +22,6 @@
         <button class="button" id="next-day">Proceed to Next Day</button>
     </main>
     <script src="events.js"></script>
-    <script type="module" src="script.js"></script>
      <!-- The script to collect participants follows -->
      <script>
         function loadParticipants() {
@@ -122,7 +121,97 @@ function runRandomEvent() {
 }
 
 }
+//the code to run random events follows...?
+let currentDay = 1;
+let pastEvents = [];  // store event IDs
+let participants = JSON.parse(localStorage.getItem("participants")) || [];
 
+function appendEventLog(message) {
+    const logDiv = document.getElementById("event-log");
+    if (logDiv) {
+        logDiv.innerHTML += `<p>${message}</p>`;
+    } else {
+        console.error("Event log div not found.");
+    }
+}
+
+
+function runDayEvents() {
+    console.log(`===== DAY ${currentDay} =====`);
+
+    // Loop over each event
+    events.forEach(event => {
+        const validPools = event.valid(participants);
+
+        if (validPools.length === 0) {
+            console.log(`No valid targets for event ${event.id}`);
+            return;
+        }
+
+        // Pick one random target or pair
+        const chosen = validPools[Math.floor(Math.random() * validPools.length)];
+
+        if (Array.isArray(chosen)) {
+            // Multi-target event (like servant vs servant or servant-master betrayal)
+            event.effects(...chosen, participants);
+
+            // Generate event text using provided names
+            const eventText = processEventTemplate(event.description, {
+                servant1: chosen[0],
+                servant2: chosen[1],
+                master: chosen[1], // if second is master, works for betrayal template
+            });
+
+            console.log(eventText);
+            appendEventLog(`Day ${currentDay}: ${eventText}`);
+        } else {
+            // Single-target event (just a master)
+            const master = chosen;
+            const servant = participants.find(p => p.type === "servant" && p.masterId === master.id);
+
+            event.effects(master, servant, participants);
+
+            const eventText = processEventTemplate(event.description, {
+                master,
+                servant,
+            });
+
+            console.log(eventText);
+            appendEventLog(`Day ${currentDay}: ${eventText}`);
+        }
+    });
+
+    currentDay++;
+}
+
+
+// Button for next days
+document.getElementById("next-day").addEventListener("click", () => {
+    runDayEvents();  // runs once for each alive master
+});
+
+
+
+// eventRunner follows
+
+function processEventTemplate(template, context) {
+    return template.replace(/\{([a-zA-Z0-9_.]+)\}/g, (_, key) => {
+        const parts = key.split(".");
+        let value = context;
+        for (const part of parts) {
+            if (value && part in value) {
+                value = value[part];
+            } else {
+                return `{${key}}`; // leave if missing
+            }
+        }
+        return value;
+    });
+}
+const eventText = processEventTemplate(selectedEvent.description, {
+    master: master,
+    servant: servant
+});
     </script>
 </body>
 </html>
