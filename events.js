@@ -27,7 +27,6 @@ const eventPool = [
             loser.status = "dead"; // Randomly pick a servant to die
         }
     },
-    // Add more events here as needed...
     {
         id: "event_betrayal",
         description: "{servant1} betrays {master}. The master is left defenseless and killed.",
@@ -40,8 +39,41 @@ const eventPool = [
             }
         }
     },
+    {
+        id: "poison_mushroom",
+        description: "{master.name} eats a poisonous mushroom!",
+        valid: (participants) => participants.filter(p => p.type === "master" && p.status === "alive"),
+        effects: (master, servant, participants) => {
+            // no persistent state; just logs the event
+        }
+    },
+    {
+        id: "poison_death",
+        description: "{master.name} succumbs to the poison and dies.",
+        followUpFor: ["poison_mushroom"],
+        valid: (participants, pastEvents) =>
+            pastEvents.includes("poison_mushroom") &&
+            participants.filter(p => p.type === "master" && p.status === "alive"),
+        effects: (master, servant, participants) => {
+            master.status = "dead";
+            if (servant && !servant.hasIndependentAction) {
+                servant.status = "dead";
+            }
+        }
+    },
+    {
+        id: "poison_heal",
+        description: "{master.name} miraculously recovers from the poison!",
+        followUpFor: ["poison_mushroom"],
+        valid: (participants, pastEvents) =>
+            pastEvents.includes("poison_mushroom") &&
+            participants.filter(p => p.type === "master" && p.status === "alive"),
+        effects: (master, servant, participants) => {
+            // healed, no death
+        }
+    },
     
 ];
 
 // Export the eventPool so it can be used in other files
-export { eventPool };
+export { events };
