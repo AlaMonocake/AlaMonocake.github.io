@@ -1,0 +1,1 @@
+✨ Aspiring web developer and software development student. I am currently working on a simulator! Based on the brantsteele hunger games simulator, my project simulates a holy grail war between 7 masters and 7 servants from the fate series.
