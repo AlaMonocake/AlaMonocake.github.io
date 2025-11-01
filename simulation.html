@@ -19,7 +19,7 @@
             <!-- Events will be inserted here by JavaScript -->
         </div>
         
-        <button class="button" id="next-day">Proceed to Next Day</button>
+        <button class="button" id="next-day">Proceed</button>
     </main>
     <script type="module" src="events.js"></script>
      <!-- The script to collect participants follows -->
@@ -56,11 +56,26 @@
             const masters = participants.filter(p => p.type === "master");
 
     masters.forEach(master => {
-        if (master.servantName && master.servantName !== "Unknown") {
-            events += `<p><img src="${master.picture}" width="50"> <strong>${master.name}</strong> summons <strong>${master.servantName}</strong>.</p>`;
-        } else {
-            events += `<p><img src="${master.picture}" width="50"> <strong>${master.name}</strong> summons an unknown servant.</p>`;
-        }
+        const servant = participants.find(
+    p => p.type === "servant" && p.masterId === master.id
+);
+
+if (servant && servant.name !== "Unknown") {
+    events += `
+        <p>
+            <img src="${master.picture}" width="50"> 
+            <strong>${master.name}</strong> summons 
+            <img src="${servant.image}" width="50"> 
+            <strong>${servant.name}</strong>.
+        </p>`;
+} else {
+    events += `
+        <p>
+            <img src="${master.picture}" width="50"> 
+            <strong>${master.name}</strong> summons an unknown servant.
+        </p>`;
+}
+
     });
 
     eventLog.innerHTML = events;
@@ -126,63 +141,61 @@ let currentDay = 1;
 let pastEvents = [];  // store event IDs
 let participants = JSON.parse(localStorage.getItem("participants")) || [];
 
-function appendEventLog(message) {
+function displayDayEvents(dayNumber, events) {
     const logDiv = document.getElementById("event-log");
-    if (logDiv) {
-        logDiv.innerHTML += `<p>${message}</p>`;
-    } else {
-        console.error("Event log div not found.");
-    }
+    const title = document.getElementById("day-title");
+
+    // Clear previous events
+    logDiv.innerHTML = "";
+
+    // Update title
+    title.textContent = `Day ${dayNumber}`;
+
+    // Add each event as a paragraph
+    events.forEach(text => {
+        const p = document.createElement("p");
+        p.textContent = text;
+        logDiv.appendChild(p);
+    });
 }
 
-
 function runDayEvents() {
+    const participants = JSON.parse(localStorage.getItem("participants")) || [];
+    const aliveMasters = participants.filter(p => p.type === "master" && p.status === "alive");
+    const aliveServants = participants.filter(p => p.type === "servant" && p.status === "alive");
+
     console.log(`===== DAY ${currentDay} =====`);
+    const dayEvents = [];
 
-    // Loop over each event
-    events.forEach(event => {
-        const validPools = event.valid(participants);
+    aliveMasters.forEach(master => {
+        const servant = aliveServants.find(s => s.id === master.servantId);
 
-        if (validPools.length === 0) {
-            console.log(`No valid targets for event ${event.id}`);
+        const validEvents = events.filter(event => {
+            const validPool = event.valid(participants);
+            return validPool.includes(master);
+        });
+
+        if (validEvents.length === 0) {
+            console.log(`No valid events for ${master.name}`);
             return;
         }
 
-        // Pick one random target or pair
-        const chosen = validPools[Math.floor(Math.random() * validPools.length)];
+        const selectedEvent = validEvents[Math.floor(Math.random() * validEvents.length)];
 
-        if (Array.isArray(chosen)) {
-            // Multi-target event (like servant vs servant or servant-master betrayal)
-            event.effects(...chosen, participants);
+        selectedEvent.effects(participants, master, servant);
 
-            // Generate event text using provided names
-            const eventText = processEventTemplate(event.description, {
-                servant1: chosen[0],
-                servant2: chosen[1],
-                master: chosen[1], // if second is master, works for betrayal template
-            });
+        const eventText = processEventTemplate(selectedEvent.description, {
+            master,
+            servant
+        });
 
-            console.log(eventText);
-            appendEventLog(`Day ${currentDay}: ${eventText}`);
-        } else {
-            // Single-target event (just a master)
-            const master = chosen;
-            const servant = participants.find(p => p.type === "servant" && p.masterId === master.id);
-
-            event.effects(master, servant, participants);
-
-            const eventText = processEventTemplate(event.description, {
-                master,
-                servant,
-            });
-
-            console.log(eventText);
-            appendEventLog(`Day ${currentDay}: ${eventText}`);
-        }
+        dayEvents.push(`Day ${currentDay}: ${eventText}`);
     });
 
+    displayDayEvents(currentDay, dayEvents);
     currentDay++;
 }
+
 
 
 // Button for next days

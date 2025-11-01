@@ -1,3 +1,4 @@
+let participants = [];
 import { events } from './events.js';
 console.log("Checking if .master elements exist...");
 console.log(document.querySelectorAll(".master"));
@@ -30,13 +31,13 @@ console.log(document.querySelectorAll(".master-img"));
         });
     });
 }); //this was the code for updating the master pictures
-window.onload = function() {
-    console.log("Page fully loaded! Fetching Servant data...");
-    fetchServantData();
-
-    console.log("Starting Day 1 events...");
-    runDayEvents();
-};
+document.addEventListener("DOMContentLoaded", () => {
+    if (typeof runDayEvents === "function") {
+        runDayEvents();
+    } else {
+        console.error("runDayEvents() is not defined yet.");
+    }
+});
 // now the code for the servant data:
 async function fetchServantData() {
     const url = 'https://api.atlasacademy.io/export/NA/basic_servant.json';
@@ -78,11 +79,9 @@ function populateServantDropdown(servantDataArray) {
         // Add each Servant to the dropdown
         servantDataArray.forEach(servant => {
             const option = document.createElement("option");
-            // Extract a shortname; if you have a better key, replace servant.name here
-        //const shortName = servant.name.split(" ")[0];  // crude fallback: take first word like "Artoria"
-        //option.value = shortName;  // store shortname for simulator matching
-        option.textContent = servant.name;  // full display name for user
-        option.dataset.id = servant.id;  // store numeric ID if needed later
+            option.textContent = servant.name;  // full display name for user
+            option.dataset.id = servant.id;  // store numeric ID if needed later
+            option.dataset.image = servant.image; // get the servantimage
             dropdown.appendChild(option);  // <-- fix here
         });
     });
@@ -106,7 +105,7 @@ document.addEventListener("DOMContentLoaded", function () {
             servantList = servants.map(servant => ({
                 id: servant.id,
                 name: servant.name,
-                image: servant.face
+                image: servant.image
             }));
         } catch (error) {
             console.error("Failed to fetch Servants:", error);
@@ -141,10 +140,7 @@ function randomizeServant(index) {
         }
     }
     
-    const servantImage = document.querySelectorAll(".servant-img")[index];
-    if (servantImage) {
-        servantImage.src = randomServant.image; // Update the image source
-    }
+
 }
 
     
@@ -161,7 +157,7 @@ function randomizeServant(index) {
 //simulation button function:
 function saveParticipantsAndStartSimulation() {
     let teamContainers = document.querySelectorAll(".form-container");
-    let participants = [];
+    participants = [];
 
     teamContainers.forEach((teamContainer, index) => {
         let masterContainer = teamContainer.querySelector(".master");
@@ -174,12 +170,14 @@ function saveParticipantsAndStartSimulation() {
         let name = nameInput ? nameInput.value.trim() || `Master ${index + 1}` : `Master ${index + 1}`;
         let gender = genderSelect ? genderSelect.value : "nonbinary"; // fallback to nonbinary if missing
         let pronouns = getPronouns(gender);
+        let servantHasIndependentAction = false; // default unless set elsewhere
         let pictureUrl = pictureEl ? pictureEl.src : "";
 
         let servantDropdown = servantContainer ? servantContainer.querySelector(".servant-select") : null;
 
         let servantId = "Unknown";
         let servantName = "Unknown";
+        let servantImage;
 
         if (servantDropdown) {
             const selectedIndex = servantDropdown.selectedIndex;
@@ -217,7 +215,7 @@ function saveParticipantsAndStartSimulation() {
             status: "alive",
             masterId: masterData.id,
             hasIndependentAction: servantHasIndependentAction,
-            image: servantImage
+            image: servantImage //don't gd touch this if servant images work
         };
 
         participants.push(masterData);
@@ -250,4 +248,35 @@ document.addEventListener("DOMContentLoaded", function () {
         console.error("Start Simulation button not found!");
     }
 });
+// ----------------------------
+//  Run Daily Events
+// ----------------------------
+function runDayEvents() {
+    console.log("===== DAY 1 =====");
+    if (!participants || participants.length === 0) {
+    participants = JSON.parse(localStorage.getItem("participants")) || [];
+}
+
+    const aliveMasters = participants.filter(p => p.type === "master" && p.status === "alive");
+
+    if (aliveMasters.length === 0) {
+        console.log("No masters remain alive. Simulation ends.");
+        return;
+    }
+
+    // Example Day 1 event
+    const randomEvent = events[Math.floor(Math.random() * events.length)];
+    const targetMaster = aliveMasters[Math.floor(Math.random() * aliveMasters.length)];
+
+    if (randomEvent && targetMaster) {
+        const description = randomEvent.description.replace("{master}", targetMaster.name);
+       
+        console.log(description);
+
+        // Apply event effect if defined
+        if (typeof randomEvent.effects === "function") {
+            randomEvent.effects(participants, targetMaster);
+        }
+    }
+}
 
